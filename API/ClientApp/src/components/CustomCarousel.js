@@ -4,12 +4,11 @@ import {
   CarouselItem,
   CarouselControl,
   CarouselIndicators,
-  CarouselCaption,
 } from 'reactstrap';
 
 import './CustomCarousel.css'
 
-function CustomCarousel({args, items}) {
+function CustomCarousel({ args, items }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
 
@@ -44,11 +43,7 @@ function CustomCarousel({args, items}) {
         key={item.src}
         className="carousel-item"
       >
-        <img onClick={(e) => handleClick(e, item.link)} style={{ position: "absolute", top: "0", left: "0", minHeight: "260px", cursor: 'pointer' }} className="d-block w-100" src={item.src} alt={item.altText} />
-        <CarouselCaption
-          captionText={item.caption}
-          captionHeader={item.caption}
-        />
+        <img onClick={(e) => handleClick(e, item.link)} className="d-block w-100" src={item.src} alt={item.altText} />
       </CarouselItem>
     );
   });

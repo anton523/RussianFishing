@@ -4,6 +4,7 @@ using API.Controllers.Contents.Foods.Dto;
 using API.Controllers.Contents.Gears.Dto;
 using API.Controllers.Contents.Hooks.Dto;
 using API.Controllers.Contents.Tools.Dto;
+using API.Controllers.Posts.Dto;
 using API.Controllers.Users.Dto;
 using AutoMapper;
 using Core.Domains.Baits;
@@ -11,6 +12,7 @@ using Core.Domains.Fishes;
 using Core.Domains.Foods;
 using Core.Domains.Gears;
 using Core.Domains.Hooks;
+using Core.Domains.Posts;
 using Core.Domains.Tools;
 using Core.Domains.Users;
 
@@ -22,6 +24,7 @@ public class AppMappingProfile : Profile
     {
         CreateMap<User, UserDto>().ReverseMap();
         CreateMap<User, CreateUserDto>().ReverseMap();
+        CreateMap<Post, PostDto>().ReverseMap();
         CreateMap<Fish, FishDto>().ReverseMap();
         CreateMap<NaturalBait, NaturalBaitDto>().ReverseMap();
         CreateMap<UnnaturalBait, UnnaturalBaitDto>().ReverseMap();

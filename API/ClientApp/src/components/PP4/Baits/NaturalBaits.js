@@ -5,6 +5,7 @@ import { NNaturalBaits } from './NaturalBaits/NNaturalBaits';
 import { BoyleBaits } from './NaturalBaits/BoyleBaits';
 import { SeaBaits } from './NaturalBaits/SeaBaits';
 import { getAllNaturalBaits } from '../../../utils/BaitsApi';
+import '../PP4.css';
 
 export function NaturalBaits() {
   const [selected, setSelected] = useState(NaturalBaitsCategories[0].name);
@@ -13,7 +14,6 @@ export function NaturalBaits() {
   useEffect(() => {
     getAllNaturalBaits().then(baits => {
       setBaits(baits);
-      console.log(baits)
     });
   }, []);
 
@@ -36,10 +36,33 @@ export function NaturalBaits() {
   return (
     <div style={{ display: 'flex', gap: '15px', flexDirection: 'column' }}>
       <div style={{ margin: 'auto' }}>
-        <ButtonGroup>
+        <ButtonGroup className='button-container'>
           {
             NaturalBaitsCategories.map(category => {
-              return <Button color='primary' active={selected === category.name} onClick={() => setSelected(category.name)}>{category.name}</Button>
+              return (
+                <Button
+                  key={category.name}
+                  color='primary'
+                  active={selected === category.name}
+                  onClick={() => setSelected(category.name)}>
+                  {category.name}
+                </Button>
+              );
+            })
+          }
+        </ButtonGroup>
+        <ButtonGroup vertical className='button-container-vertical'>
+          {
+            NaturalBaitsCategories.map(category => {
+              return (
+                <Button
+                  key={category.name}
+                  color='primary'
+                  active={selected === category.name}
+                  onClick={() => setSelected(category.name)}>
+                  {category.name}
+                </Button>
+              );
             })
           }
         </ButtonGroup>

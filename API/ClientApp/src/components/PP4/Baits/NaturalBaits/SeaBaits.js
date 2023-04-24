@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function SeaBaits({ baits }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -36,7 +36,7 @@ export function SeaBaits({ baits }) {
         {
           baits.map(bait => {
             if (bait.type === 'Sea') {
-              return <tr>
+              return <tr key={bait.id}>
                 <td>
                   {bait.name}
                 </td>

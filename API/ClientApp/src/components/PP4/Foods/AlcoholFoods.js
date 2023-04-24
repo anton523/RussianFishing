@@ -7,13 +7,12 @@ export function AlcoholFoods() {
 
   useEffect(() => {
     getAllAlcohol().then(alcohols => {
-      console.log(alcohols)
       setFoods(alcohols);
     })
   }, [])
 
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -60,7 +59,7 @@ export function AlcoholFoods() {
       <tbody>
         {
           foods.map(food => {
-            return <tr>
+            return <tr key={food.id}>
               <td>
                 {food.name}
               </td>

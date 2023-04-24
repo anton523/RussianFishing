@@ -55,14 +55,35 @@ export function HookHooks() {
   return (
     <div style={{ display: 'flex', gap: '15px', flexDirection: 'column' }}>
       <div style={{ margin: 'auto' }}>
-        <ButtonGroup>
-          <ButtonGroup>
-            {
-              HooksCategories.map(category => {
-                return <Button color='primary' active={selected === category.name} onClick={() => setSelected(category.name)}>{category.name}</Button>
-              })
-            }
-          </ButtonGroup>
+        <ButtonGroup className='button-container'>
+          {
+            HooksCategories.map(category => {
+              return (
+                <Button
+                  key={category.name}
+                  color='primary'
+                  active={selected === category.name}
+                  onClick={() => setSelected(category.name)}>
+                  {category.name}
+                </Button>
+              );
+            })
+          }
+        </ButtonGroup>
+        <ButtonGroup vertical className='button-container-vertical'>
+          {
+            HooksCategories.map(category => {
+              return (
+                <Button
+                  key={category.name}
+                  color='primary'
+                  active={selected === category.name}
+                  onClick={() => setSelected(category.name)}>
+                  {category.name}
+                </Button>
+              );
+            })
+          }
         </ButtonGroup>
       </div>
       {render()}

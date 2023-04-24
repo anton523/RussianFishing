@@ -1,41 +1,47 @@
-import React, { useContext, useState } from 'react';
-import { Collapse, Navbar, NavbarToggler, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownItem, DropdownMenu, Dropdown } from 'reactstrap';
+import React, { useContext, useEffect, useState } from 'react';
+import { Collapse, Nav, NavbarBrand, Navbar, NavbarToggler, NavItem, NavLink, DropdownToggle, DropdownItem, DropdownMenu, Dropdown } from 'reactstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import './NavMenu.css';
 import { AuthContext } from '../contexts/Auth';
 import { logout } from '../utils/UserApi';
 import { Categories } from '../addons/Categories';
-import { Maps } from '../addons/Maps';
+import MapsApi from '../utils/MapsApi';
+import { UserContext } from '../contexts/User';
 
-export function NavMenu() {
+export function NavMenu({ args }) {
   const auth = useContext(AuthContext);
+  const userContext = useContext(UserContext);
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [openMaps, setOpenMaps] = useState(false);
   const [openCategories, setOpenCategories] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [maps, setMaps] = useState([]);
 
-  function toggleNavbar() {
-    setCollapsed(!collapsed);
-  }
+  useEffect(() => {
+    MapsApi.GetAll().then(maps => {
+      setMaps(maps);
+    });
+  }, []);
+
+  const profileToggle = () => setProfileOpen(prev => !prev);
+
+  const toggle = () => setIsOpen(!isOpen);
 
   function handleLogout() {
-    logout();
-    auth.logout();
+    logout().then(() => {
+      auth.logout();
+      navigate('/');
+    })
   }
 
   return (
     <header>
-      <div style={{ width: '100%', height: '75px' }}>
-        <img style={{ width: '100%', height: '100%' }} src="/imgs/water.jpg" alt='' />
-      </div>
-      <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3 d-flex navbar" container={false}>
-        {/* <NavbarBrand tag={Link} to="/">Русская рыбалка 4</NavbarBrand> */}
-        <NavbarToggler onClick={toggleNavbar} className="mr-2" />
-        <Collapse className="d-sm-inline-flex flex-sm-row" isOpen={collapsed} navbar>
-          <ul className="navbar-nav flex-grow ul-navbar">
-            <NavItem>
-              <NavLink tag={Link} className="text-dark" to="/">Главная</NavLink>
-            </NavItem>
+      <Navbar sm={{ padding: 0 }} {...args} style={{ padding: '0.5rem 2rem' }} expand='md' dark color='dark'>
+        <NavbarBrand href="/">Russian Fishing 4</NavbarBrand>
+        <NavbarToggler onClick={toggle} />
+        <Collapse isOpen={isOpen} navbar>
+          <Nav style={{ flexGrow: 1 }} navbar>
             <Dropdown
               nav
               inNavbar
@@ -44,60 +50,66 @@ export function NavMenu() {
               onMouseEnter={() => setOpenCategories(true)}
               onMouseLeave={() => setOpenCategories(false)}
             >
-              <DropdownToggle nav caret className='text-dark'>
+              <DropdownToggle nav caret>
                 РР4
               </DropdownToggle>
-              <DropdownMenu end>
+              <DropdownMenu>
                 {
                   Categories.map(category => {
-                    return <DropdownItem key={category.name} tag={Link} to={category.path}>{category.name}</DropdownItem>
+                    return <DropdownItem onClick={() => setOpenCategories(false)} key={category.name} tag={Link} to={category.path}>{category.name}</DropdownItem>
                   })
                 }
               </DropdownMenu>
             </Dropdown>
-            <NavItem>
-              {/* <NavLink tag={Link} className="text-dark" to="/maps">Карты PP4</NavLink> */}
-              <Dropdown
-                nav
-                inNavbar
-                isOpen={openMaps}
-                toggle={() => navigate('/maps')}
-                onMouseEnter={() => setOpenMaps(true)}
-                onMouseLeave={() => setOpenMaps(false)}
-              >
-                <DropdownToggle nav caret className='text-dark'>
-                  Карты
-                </DropdownToggle>
-                <DropdownMenu>
-                  {
-                    Maps.map(map => {
-                      return (
-                        <DropdownItem key={map.name} tag={Link} to={map.path}>{map.name}</DropdownItem>
-                      );
-                    })
-                  }
-                </DropdownMenu>
-              </Dropdown>
-            </NavItem>
-            <NavItem>
-              <NavLink tag={Link} className="text-dark" to="/forum">Форум</NavLink>
+            <Dropdown
+              nav
+              inNavbar
+              isOpen={openMaps}
+              toggle={() => navigate('/maps')}
+              onMouseEnter={() => setOpenMaps(true)}
+              onMouseLeave={() => setOpenMaps(false)}
+            >
+              <DropdownToggle nav caret>
+                Карты
+              </DropdownToggle>
+              <DropdownMenu>
+                {
+                  maps.map(map => {
+                    return (
+                      <DropdownItem
+                        onClick={() => setOpenMaps(false)}
+                        key={map.id}
+                        tag={Link}
+                        to={`/maps/${map.id}`}>
+                        {map.name}
+                      </DropdownItem>
+                    );
+                  })
+                }
+              </DropdownMenu>
+            </Dropdown>
+            <NavItem style={{ marginRight: 'auto' }}>
+              <NavLink tag={Link} to="/forum">Форум</NavLink>
             </NavItem>
             <NavItem>
               {
                 auth.authStatus
-                  ? <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle nav caret className='text-dark'>
+                  ? <Dropdown toggle={profileToggle} isOpen={profileOpen}>
+                    <DropdownToggle nav caret>
                       Профиль
                     </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem tag={Link} to='/profile' >Кабинет</DropdownItem>
+                    <DropdownMenu>
+                      {
+                        userContext.user && userContext.user.role !== 'Admin' ? <></> : <DropdownItem tag={Link} to='/admin'>Админка</DropdownItem>
+                      }
+                      <DropdownItem tag={Link} to='/profile'>Кабинет</DropdownItem>
                       <DropdownItem onClick={handleLogout} >Выйти</DropdownItem>
                     </DropdownMenu>
-                  </UncontrolledDropdown>
-                  : <NavLink tag={Link} className="text-dark" to="/login">Войти</NavLink>
+                  </Dropdown>
+                  : <NavLink tag={Link} to="/login">Войти</NavLink>
               }
             </NavItem>
-          </ul>
+          </Nav>
         </Collapse>
       </Navbar>
     </header>

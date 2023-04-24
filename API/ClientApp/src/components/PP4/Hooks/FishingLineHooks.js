@@ -7,7 +7,6 @@ export function FishingLineHooks() {
 
   useEffect(() => {
     getAllFishingLines().then(fishingLines => {
-      console.log(fishingLines)
       setfishingLines(fishingLines);
     })
   }, [])
@@ -18,7 +17,7 @@ export function FishingLineHooks() {
 
   return (
     <div style={{ display: 'flex', gap: '15px', flexDirection: 'column' }}>
-      <Table bordered>
+      <Table bordered responsive>
         <thead>
           <tr>
             <th>
@@ -62,7 +61,7 @@ export function FishingLineHooks() {
         <tbody>
           {
             fishingLines.map(fishingLine => {
-              return <tr>
+              return <tr key={fishingLine.id}>
                 <td>
                   {fishingLine.name}
                 </td>

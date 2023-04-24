@@ -1,3 +1,4 @@
+using System.Data.Entity.Core;
 using API.Controllers.Contents.Gears.Dto;
 using AutoMapper;
 using Core;
@@ -58,6 +59,32 @@ public class GearsController : ControllerBase
         var rod = _mapper.Map<Rod>(createRod);
 
         await _applicationContext.Rods.AddAsync(rod, cancellationToken);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("rods/{id}")]
+    public async Task DeleteRod(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await _applicationContext.Rods.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (entity is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.Rods.Remove(entity);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("coils/{id}")]
+    public async Task DeleteCoil(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await _applicationContext.Coils.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (entity is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.Coils.Remove(entity);
         await _unitOfWork.SaveChange();
     }
 }

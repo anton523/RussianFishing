@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function SpinningRods({ rods }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -56,8 +56,8 @@ export function SpinningRods({ rods }) {
       <tbody>
         {
           rods.map(rod => {
-            if (rod.type === 'Spinning') {
-              return <tr>
+            return (
+              <tr key={rod.id}>
                 <td>
                   {rod.name}
                 </td>
@@ -104,7 +104,7 @@ export function SpinningRods({ rods }) {
                   {rod.silverPrice}
                 </td>
               </tr>
-            }
+            );
           })
         }
       </tbody>

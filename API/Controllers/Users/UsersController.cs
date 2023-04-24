@@ -19,12 +19,14 @@ public class UserController : ControllerBase
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly IWebHostEnvironment _webHostEnv;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UserController(IUserService userService, IMapper mapper, IWebHostEnvironment webHostEnv)
+    public UserController(IUserService userService, IMapper mapper, IWebHostEnvironment webHostEnv, IUnitOfWork unitOfWork)
     {
         _userService = userService;
         _mapper = mapper;
         _webHostEnv = webHostEnv;
+        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
@@ -41,7 +43,8 @@ public class UserController : ControllerBase
             Email = model.Email,
             AvatarUri = model.AvatarUri,
             Description = model.Description,
-            CreatedAt = model.CreatedAt
+            CreatedAt = model.CreatedAt,
+            Role = model.Role
         };
 
         return userDto;
@@ -59,6 +62,16 @@ public class UserController : ControllerBase
     public async Task<IEnumerable<Post>> GetAllUserPosts(string userId, CancellationToken cancellationToken)
     {
         return await _userService.GetAllUserPosts(userId, cancellationToken);
+    }
+
+    [HttpPost("update-role")]
+    public async Task UpdateUserRole(UpdateUserRoleDto updateUserRoleDto, CancellationToken cancellationToken)
+    {
+        var user = await _userService.GetById(updateUserRoleDto.Id, cancellationToken);
+
+        user.Role = updateUserRoleDto.Role;
+
+        await _unitOfWork.SaveChange();
     }
 
     [HttpPut]
@@ -91,7 +104,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task Delete(string userId, CancellationToken cancellationToken)
     {
         await _userService.Delete(userId, cancellationToken);
@@ -121,8 +134,8 @@ public class UserController : ControllerBase
         return Ok();
     }
     
-    [Route("whoami")]
     [HttpGet]
+    [Route("whoami")]
     public async Task WhoAmI()
     {
         var whoami = HttpContext.User.Identity?.Name ?? "Anonymous";

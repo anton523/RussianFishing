@@ -65,7 +65,7 @@ function ShortPost({ post }) {
           : <></>
       }
       <CardBody>
-        <CardText className='text-dark' style={{
+        <CardText tag='div' className='text-dark' style={{
           display: '-webkit-box',
           WebkitBoxOrient: 'vertical',
           WebkitLineClamp: '4',

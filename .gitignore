@@ -371,5 +371,5 @@ FodyWeavers.xsd
 appsettings.json
 
 # Static files
-**/imgs/*
+**/api/imgs/*
 !.gitkeep

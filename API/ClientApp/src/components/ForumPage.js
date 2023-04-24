@@ -6,49 +6,10 @@ import {
 } from 'reactstrap';
 import { MdFavorite, MdComment, MdVisibility, MdDateRange } from "react-icons/md";
 import { useNavigate, Link } from 'react-router-dom';
-import { getAllPosts } from '../utils/PostApi';
+import { addOrRemoveLikePost, getAllPosts } from '../utils/PostApi';
 import { filters } from '../addons/PostFilters';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import { AuthContext } from '../contexts/Auth';
-
-// const posts = [
-//   {
-//     id: '321355642',
-//     user: {
-//       name: 'Maksim Rakitin'
-//     },
-//     title: 'Шансы закрыть трофея (ценность трофея)',
-//     reactions: 100,
-//     comments: 1,
-//     views: 8,
-//     date: '21.02.2022',
-//     content: 'lorem xyem ja;ksjd hasjfhhkj hlfghufg gkdfhggy gjewgfrf ddffdgkjg kdgfkhgfdfhd'
-//   },
-//   {
-//     id: '57945654',
-//     user: {
-//       name: 'Maksim Rakitin'
-//     },
-//     title: 'Шансы закрыть трофея (ценность трофея)',
-//     reactions: 34,
-//     comments: 56,
-//     views: 478,
-//     date: '23.02.2023',
-//     content: 'lorem xyem ja;ksjd hasjfhhkj hlfghufg gkdfhggy gjewgfrf ddffdgkjg kdgfkhgfdfhd'
-//   },
-//   {
-//     id: '75463536786',
-//     user: {
-//       name: 'Maksim Rakitin'
-//     },
-//     title: 'Шансы закрыть трофея (ценность трофея)',
-//     reactions: 9,
-//     comments: 7,
-//     views: 777,
-//     date: '22.02.2023',
-//     content: 'lorem xyem ja;ksjd hasjfhhkj hlfghufg gkdfhggy gjewgfrf ddffdgkjg kdgfkhgfdfhd'
-//   },
-// ];
 
 const ForumPage = (props) => {
   const auth = useContext(AuthContext);
@@ -89,10 +50,14 @@ const ForumPage = (props) => {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '100%',
+        gap: '1rem'
       }}>
         <Dropdown isOpen={filterOpen} toggle={toggleFilter} direction='down'>
-          <DropdownToggle caret>Фильтр: {selectedFilter.name}</DropdownToggle>
+          <DropdownToggle caret style={{
+            height: '100%'
+          }}>
+            Фильтр: {selectedFilter.name}
+          </DropdownToggle>
           <DropdownMenu>
             {
               filters.map(filter => {
@@ -125,23 +90,6 @@ const ForumPage = (props) => {
           }
         </Masonry>
       </ResponsiveMasonry>
-      {/* <div id='forum-posts' style={{
-        display: 'flex',
-        flexGrow: 1,
-        flexWrap: 'wrap',
-        gap: '1rem',
-        justifyContent: 'center',
-        alignItems: 'stretch',
-      }}>
-        {
-          postsState === null ? <></> :
-            postsState.map(post => {
-              return (
-                <ForumShortPost key={post.id} post={post} />
-              );
-            })
-        }
-      </div> */}
     </div>
   );
 };
@@ -149,6 +97,9 @@ const ForumPage = (props) => {
 const ForumShortPost = ({ post }) => {
   const [titleImg, setTitleImg] = useState('');
   const [text, setText] = useState('');
+  const [postState, setPostState] = useState(post);
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handlePostText = useCallback(() => {
     var htmlObject = document.createElement('div');
@@ -166,6 +117,32 @@ const ForumShortPost = ({ post }) => {
     setText(htmlObject.innerHTML);
 
   }, [post]);
+
+  const handleLike = (id) => {
+    if (auth.authStatus === false) {
+      navigate('/login', { replace: false });
+      return;
+    }
+    addOrRemoveLikePost(id).then(flag => {
+      if (flag) {
+        setPostState(prev => {
+          return {
+            ...prev,
+            likes: prev.likes + 1,
+            isCurrentUserLike: true
+          }
+        });
+      } else {
+        setPostState(prev => {
+          return {
+            ...prev,
+            likes: prev.likes - 1,
+            isCurrentUserLike: false
+          }
+        });
+      }
+    });
+  }
 
   useEffect(() => {
     handlePostText();
@@ -190,10 +167,10 @@ const ForumShortPost = ({ post }) => {
         <CardTitle tag='h5' style={{
           textAlign: 'center'
         }}>
-          <CardLink tag={Link} to={post.id} className='text-dark' style={{
+          <CardLink tag={Link} to={postState.id} className='text-dark' style={{
             textDecoration: 'none'
           }}>
-            {post.title}
+            {postState.title}
           </CardLink>
         </CardTitle>
       </CardHeader>
@@ -202,14 +179,16 @@ const ForumShortPost = ({ post }) => {
         flexDirection: 'column',
         justifyContent: 'space-between'
       }}>
-        <CardText style={{
-          display: '-webkit-box',
-          WebkitBoxOrient: 'vertical',
-          WebkitLineClamp: '4',
-          whiteSpace: 'normal',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}>
+        <CardText
+          tag='div'
+          style={{
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: '4',
+            whiteSpace: 'normal',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>
           <div dangerouslySetInnerHTML={{ __html: text }} />
         </CardText>
         <CardDeck style={{
@@ -225,7 +204,7 @@ const ForumShortPost = ({ post }) => {
           }}>
             <MdFavorite />
             <div>
-              {post.likes}
+              {postState.likes}
             </div>
           </div>
           <div style={{
@@ -235,7 +214,7 @@ const ForumShortPost = ({ post }) => {
           }}>
             <MdComment />
             <div>
-              {post.comments.length}
+              {postState.comments.length}
             </div>
           </div>
           <div style={{
@@ -245,7 +224,7 @@ const ForumShortPost = ({ post }) => {
           }}>
             <MdVisibility />
             <div>
-              {post.views}
+              {postState.views}
             </div>
           </div>
           <div style={{
@@ -255,7 +234,7 @@ const ForumShortPost = ({ post }) => {
           }}>
             <MdDateRange />
             <div>
-              {new Date(post.createdAt).toLocaleDateString()}
+              {new Date(postState.createdAt).toLocaleDateString()}
             </div>
           </div>
         </CardDeck>
@@ -264,13 +243,15 @@ const ForumShortPost = ({ post }) => {
         display: 'flex',
         justifyContent: 'space-between'
       }}>
-        <Button outline>
+        <Button outline onClick={() => handleLike(postState.id)} style={{
+          boxShadow: 'none'
+        }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '4px'
           }}>
-            <MdFavorite fontSize='20px' />
+            <MdFavorite className={`${postState.isCurrentUserLike ? 'text-danger' : ''}`} fontSize='20px' />
             <div>Лайк</div>
           </div>
         </Button>

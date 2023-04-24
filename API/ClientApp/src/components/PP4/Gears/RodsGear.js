@@ -6,6 +6,7 @@ import { RacingRods } from './RodsGear/RacingRods';
 import { SpinningRods } from './RodsGear/SpinningRods';
 import { SeaRods } from './RodsGear/SeaRods';
 import { getAllRods } from '../../../utils/GearsApi';
+import '../PP4.css';
 
 export function RodsGear() {
   const [selected, setSelected] = useState(RodsCategories[0].name);
@@ -19,16 +20,16 @@ export function RodsGear() {
 
   function render() {
     if (selected === RodsCategories[0].name) {
-      return <FloatRods rods={rods} />
+      return <FloatRods rods={rods.filter(x => x.type === 'Float')} />
     }
     if (selected === RodsCategories[1].name) {
-      return <RacingRods rods={rods} />
+      return <RacingRods rods={rods.filter(x => x.type === 'Racing')} />
     }
     if (selected === RodsCategories[2].name) {
-      return <SpinningRods rods={rods} />
+      return <SpinningRods rods={rods.filter(x => x.type === 'Spinning')} />
     }
     if (selected === RodsCategories[3].name) {
-      return <SeaRods rods={rods} />
+      return <SeaRods rods={rods.filter(x => x.type === 'Sea')} />
     }
   }
 
@@ -39,14 +40,35 @@ export function RodsGear() {
   return (
     <div style={{ display: 'flex', gap: '15px', flexDirection: 'column' }}>
       <div style={{ margin: 'auto' }}>
-        <ButtonGroup>
-          <ButtonGroup>
-            {
-              RodsCategories.map(category => {
-                return <Button color='primary' active={selected === category.name} onClick={() => setSelected(category.name)}>{category.name}</Button>
-              })
-            }
-          </ButtonGroup>
+        <ButtonGroup className='button-container'>
+          {
+            RodsCategories.map(category => {
+              return (
+                <Button
+                  key={category.name}
+                  color='primary'
+                  active={selected === category.name}
+                  onClick={() => setSelected(category.name)}>
+                  {category.name}
+                </Button>
+              );
+            })
+          }
+        </ButtonGroup>
+        <ButtonGroup vertical className='button-container-vertical'>
+          {
+            RodsCategories.map(category => {
+              return (
+                <Button
+                  key={category.name}
+                  color='primary'
+                  active={selected === category.name}
+                  onClick={() => setSelected(category.name)}>
+                  {category.name}
+                </Button>
+              );
+            })
+          }
         </ButtonGroup>
       </div>
       {render()}

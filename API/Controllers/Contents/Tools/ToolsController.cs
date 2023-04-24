@@ -1,3 +1,4 @@
+using System.Data.Entity.Core;
 using API.Controllers.Contents.Tools.Dto;
 using AutoMapper;
 using Core;
@@ -70,6 +71,32 @@ public class ToolsController : ControllerBase
 
         await _applicationContext.Tools.AddAsync(tool, cancellationToken);
         
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("tools/{id}")]
+    public async Task DeleteTool(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await _applicationContext.Tools.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (entity is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.Tools.Remove(entity);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("slingshots/{id}")]
+    public async Task DeleteSlingshot(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await _applicationContext.Slingshots.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (entity is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.Slingshots.Remove(entity);
         await _unitOfWork.SaveChange();
     }
 }

@@ -41,7 +41,7 @@ function ForumActivity(args) {
         {
           posts.slice(0, 3).map(post => {
             return (
-              <ShortPost post={post}/>
+              <ShortPost key={post.id} post={post}/>
             );
           })
         }

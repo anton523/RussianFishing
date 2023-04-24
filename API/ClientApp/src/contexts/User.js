@@ -2,15 +2,6 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import { AuthContext } from './Auth';
 import { getUser } from '../utils/UserApi';
 
-const defaultUser = {
-  username: 'zhopkin',
-  email: 'zalupkin@mail.ru'
-}; 
-
-const fakeAsync = (callback) => {
-  setTimeout(callback, 1000);
-};
-
 export const UserContext = createContext(null);
 
 const UserProvider = (props) => {
@@ -18,13 +9,11 @@ const UserProvider = (props) => {
   const [userState, setUserState] = useState(null);
 
   useEffect(() => {
-    // fakeAsync(() => {
-    //   setUserState(defaultUser);
-    // });
-
-    getUser().then(user => {
-      setUserState(user);
-    });
+    if (auth.authStatus) {
+      getUser().then(user => {
+        setUserState(user);
+      });
+    }
   }, [auth.authStatus]);
 
   const changeUser = () => {

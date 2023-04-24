@@ -13,7 +13,7 @@ export function SlingShotsTool() {
   }, [])
 
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -45,7 +45,7 @@ export function SlingShotsTool() {
       <tbody>
         {
           tools.map(tool => {
-            return <tr>
+            return <tr key={tool.id}>
               <td>
                 {tool.name}
               </td>

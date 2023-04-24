@@ -94,7 +94,7 @@ export function HooksForm() {
         return;
     }
 
-    return <FormGroup>
+    return <FormGroup key={x}>
       <Label>
         {x}
       </Label>
@@ -144,7 +144,7 @@ export function HooksForm() {
       }
   }
 
-    return <FormGroup>
+    return <FormGroup key={x}>
       <Label>
         {`${x}/0`}
       </Label>

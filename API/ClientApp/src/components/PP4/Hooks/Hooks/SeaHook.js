@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function SeaHook({ hooks }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -39,7 +39,7 @@ export function SeaHook({ hooks }) {
         {
           hooks.map(x => {
             if (x.type === 'Sea') {
-              return <tr>
+              return <tr key={x.id}>
                 <td>
                   {x.name}
                 </td>

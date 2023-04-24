@@ -35,7 +35,7 @@ export function Login() {
         <h1>Войти</h1>
         <h6>Впервые на сайте? <a href="/register">Зарегистрироваться</a></h6>
       </div>
-      <Form style={{ width: '500px', margin: 'auto' }} onSubmit={handleSubmit}>
+      <Form style={{ maxWidth: '500px', margin: 'auto' }} onSubmit={handleSubmit}>
         <FormGroup>
           <Label for="exampleEmail">
             Эл. почта

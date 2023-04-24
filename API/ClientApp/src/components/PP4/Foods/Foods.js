@@ -13,7 +13,7 @@ export function Foods() {
   }
 
   return (
-    <div style={{ display: 'flex', gap: '15px', flexDirection: 'column', margin: 'auto', padding: '0 10%' }}>
+    <div style={{ display: 'flex', gap: '15px', flexDirection: 'column', margin: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <ButtonGroup>
           <Button onClick={() => setManage(manageList[0])}>

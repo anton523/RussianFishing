@@ -66,19 +66,19 @@ const AppRoutes = [
     path: '/pp4/gears',
     element: <Gears />,
     needForumActivity: false,
-    needAside: false
+    needAside: true
   },
   {
     path: '/pp4/baits',
     element: <Baits />,
     needForumActivity: false,
-    needAside: false
+    needAside: true
   },
   {
     path: '/pp4/fishhooks',
     element: <Hooks />,
     needForumActivity: false,
-    needAside: false
+    needAside: true
   },
   {
     path: '/pp4/tools',
@@ -90,7 +90,7 @@ const AppRoutes = [
     path: '/pp4/foods',
     element: <Foods />,
     needForumActivity: false,
-    needAside: false
+    needAside: true
   },
   {
     path: '/pp4/help',
@@ -122,14 +122,12 @@ const AppRoutes = [
     needForumActivity: false,
     needAside: true
   },
-  ...Maps.map(map => {
-    return {
-      path: map.path,
-      element: <MapPage map={map} />,
-      needForumActivity: false,
-      needAside: true
-    }
-  })
+  {
+    path: '/maps/:id',
+    element: <MapPage />,
+    needForumActivity: false,
+    needAside: true
+  },
 ];
 
 

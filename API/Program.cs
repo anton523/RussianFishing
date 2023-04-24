@@ -1,16 +1,17 @@
 using System.Text.Json.Serialization;
 using API;
+using API.HostedServices;
 using Core;
 using Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services
     .AddData(builder.Configuration)
     .AddCore();
+
+builder.Services.AddHostedService<MigrationHostedService>();
 
 builder.Services.AddSwaggerGen();
 
@@ -32,8 +33,11 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -43,6 +47,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -54,6 +60,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
-app.MapFallbackToFile("index.html");
+app.MapFallbackToFile("/index.html");
 
 app.Run();

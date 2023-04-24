@@ -13,9 +13,13 @@ public class Post : BaseEntity
     public string? Text { get; set; }
     
     public virtual ICollection<Comment> Comments { get; set; }
+    public virtual ICollection<User> UsersLikes { get; set; }
+    public virtual ICollection<User> UsersViews { get; set; }
 
     public Post()
     {
         Comments = new List<Comment>();
+        UsersLikes = new List<User>();
+        UsersViews = new List<User>();
     }
 }

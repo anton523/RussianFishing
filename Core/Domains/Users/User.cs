@@ -19,4 +19,13 @@ public class User : BaseEntity
     public Role Role { get; set; }
     public string? AvatarUri { get; set; }
     public virtual ICollection<Post> Posts { get; set; }
+    public virtual ICollection<Post> LikesPosts { get; set; }
+    public virtual ICollection<Post> ViewsPosts { get; set; }
+
+    public User()
+    {
+        Posts = new List<Post>();
+        LikesPosts = new List<Post>();
+        ViewsPosts = new List<Post>();
+    }
 }

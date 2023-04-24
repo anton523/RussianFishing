@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function TeesHook({ hooks }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -11,7 +11,7 @@ export function TeesHook({ hooks }) {
           </th>
           {
             [...Array(8).keys()].reverse().map(x => {
-              return <th>{x + 1}</th>
+              return <th key={x + 1}>{x + 1}</th>
             })
           }
           <th>
@@ -38,7 +38,7 @@ export function TeesHook({ hooks }) {
         {
           hooks.map(x => {
             if (x.type === 'Tees') {
-              return <tr>
+              return <tr key={x.id}>
                 <td>
                   {x.name}
                 </td>

@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function CarpHook({ hooks }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -11,7 +11,7 @@ export function CarpHook({ hooks }) {
           </th>
           {
             [...Array(18).keys()].reverse().map(x => {
-              return <th>{x + 1}</th>
+              return <th key={x + 1}>{x + 1}</th>
             })
           }
           <th>
@@ -32,7 +32,7 @@ export function CarpHook({ hooks }) {
         {
           hooks.map(x => {
             if (x.type === 'Carp') {
-              return <tr>
+              return <tr key={x.id}>
                 <td>
                   {x.name}
                 </td>

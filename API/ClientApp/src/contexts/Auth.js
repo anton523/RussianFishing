@@ -10,7 +10,7 @@ export function AuthProvider(props) {
     whoami().then(status => {
       setAuthStatus(status);
     });
-  });
+  }, []);
 
   function login(value) {
     setAuthStatus(value);

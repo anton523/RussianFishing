@@ -1,3 +1,4 @@
+using System.Data.Entity.Core;
 using API.Controllers.Contents.Gears.Dto;
 using API.Controllers.Contents.Hooks.Dto;
 using AutoMapper;
@@ -59,6 +60,32 @@ public class HooksController : ControllerBase
         var fishingLine = _mapper.Map<FishingLine>(createFishingLineDto);
 
         await _applicationContext.FishingLines.AddAsync(fishingLine, cancellationToken);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("fishing-lines/{id}")]
+    public async Task DeleteFishingLine(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await _applicationContext.FishingLines.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (entity is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.FishingLines.Remove(entity);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("hooks/{id}")]
+    public async Task DeleteHook(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await _applicationContext.Hooks.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (entity is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.Hooks.Remove(entity);
         await _unitOfWork.SaveChange();
     }
 }

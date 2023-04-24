@@ -2,9 +2,8 @@ import React from 'react';
 import { Table } from 'reactstrap';
 
 export function SoftBaits({ baits }) {
-  console.log(baits)
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -37,7 +36,7 @@ export function SoftBaits({ baits }) {
         {
           baits.map(bait => {
             if (bait.type === 'Soft') {
-              return <tr>
+              return <tr key={bait.id}>
                 <td>
                   {bait.name}
                 </td>

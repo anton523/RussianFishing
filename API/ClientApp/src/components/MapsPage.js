@@ -1,27 +1,54 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Maps } from '../addons/Maps';
 import { Card, CardBody } from 'reactstrap';
+import Masonry from 'react-responsive-masonry';
+import MapApi from '../utils/MapsApi';
 
 
 const MapsPage = () => {
+  const [maps, setMaps] = useState([]);
+  const [countColumns, setCountColumns] = useState(4);
+
+  const calculateCountColumns = useCallback((width) => {
+    if (width <= 400) {
+      setCountColumns(2);
+    } else if (width <= 800) {
+      setCountColumns(3);
+    } else {
+      setCountColumns(4);
+    }
+  }, []);
+
+  useEffect(() => {
+    MapApi.GetAll().then(maps => {
+      setMaps(maps);
+    });
+  }, []);
+
+  useEffect(() => {
+    calculateCountColumns(window.innerWidth);
+  }, [calculateCountColumns]);
+
+  window.onresize = (e) => {
+    calculateCountColumns(e.currentTarget.innerWidth)
+  };
+
   return (
     <Card style={{
       border: 'none'
     }}>
       <CardBody style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'start',
-        gap: '1rem'
+        minWidth: '200px'
       }}>
-        {
-          Maps.map(map => {
-            return (
-              <Map map={map} />
-            );
-          })
-        }
+        <Masonry columnsCount={countColumns} gutter='1rem'>
+          {
+            maps.map(map => {
+              return (
+                <Map key={map.id} map={map} />
+              );
+            })
+          }
+        </Masonry>
       </CardBody>
     </Card>
   );
@@ -29,13 +56,13 @@ const MapsPage = () => {
 
 const Map = ({ map }) => {
   return (
-    <Link to={map.path} style={{
+    <Link to={`/maps/${map.id}`} style={{
       position: 'relative',
-      width: '23%',
-      minWidth: '140px',
+      width: '100%',
+      minWidth: '80px',
     }}>
       <div>
-        <img src={map.img} alt='' style={{
+        <img src={map.titleImage} alt='' style={{
           width: '100%',
           borderRadius: '0.25rem',
           boxShadow: '0 0 0.25rem gray'

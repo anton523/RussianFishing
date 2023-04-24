@@ -15,6 +15,26 @@ export const createPost = async function (title, text) {
   return response.status === 200;
 }
 
+export const addOrRemoveLikePost = async function(id) {
+  let response = await fetch(`api/posts/likes/${id}`, {
+    method: 'GET'
+  })
+
+  if (response.status === 200){
+    return response.json();
+  }
+
+  throw new Error();
+}
+
+export const addViewPost = async function(id) {
+  let response = await fetch(`api/posts/views/${id}`, {
+    method: 'GET'
+  })
+
+  return response.status === 200;
+}
+
 export const getPostById = async function (id) {
   let response = await fetch(`api/posts/${id}`, {
     method: 'GET'

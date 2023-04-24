@@ -5,7 +5,7 @@ import ForumActivity from './ForumActivity';
 
 export function Layout(props) {
   return (
-    <div>
+    <div id='layout'>
       <NavMenu />
       <div className='main' tag='main' style={{ display: 'flex' }}>
         {

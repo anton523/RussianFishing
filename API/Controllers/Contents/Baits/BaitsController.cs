@@ -1,4 +1,5 @@
-﻿using API.Controllers.Contents.Baits.Dto;
+﻿using System.Data.Entity.Core;
+using API.Controllers.Contents.Baits.Dto;
 using AutoMapper;
 using Core;
 using Core.Domains.Baits;
@@ -96,5 +97,31 @@ public class BaitsController : ControllerBase
         var entities = await _applicationContext.UnnaturalBaits.ToListAsync(cancellationToken);
 
         return entities.Select(x => _mapper.Map<UnnaturalBait>(x)).ToList();
+    }
+
+    [HttpDelete("unnatural/{id}")]
+    public async Task DeleteUnnaturalBait(string id, CancellationToken cancellationToken)
+    {
+        var unnaturalBait =
+            await _applicationContext.UnnaturalBaits.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (unnaturalBait is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.UnnaturalBaits.Remove(unnaturalBait);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("natural/{id}")]
+    public async Task DeleteNaturalBait(string id, CancellationToken cancellationToken)
+    {
+        var naturalBait =
+            await _applicationContext.NaturalBaits.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (naturalBait is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.NaturalBaits.Remove(naturalBait);
+        await _unitOfWork.SaveChange();
     }
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, NavLink } from 'reactstrap';
+import { NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import CustomCarousel from './CustomCarousel';
 
@@ -41,9 +41,9 @@ export class Home extends Component {
     return (
       <div style={{ display: 'flex' }}>
         <div>
-          <Container style={{ display: 'flex', height: "50px", justifyContent: 'center' }} className='border box-shadow mb-3'>
+          <div style={{ display: 'flex', height: "50px", justifyContent: 'center' }} className='border box-shadow mb-3'>
             <NavLink tag={Link} to='/forum' style={{ display: 'flex', alignItems: 'center', color: '#5A5A5A', fontSize: '25px', fontWeight: '700' }}>Форум</NavLink>
-          </Container>
+          </div>
           <div>
             <div style={{ display: "flex", gap: "25px" }}>
               <CustomCarousel items={items} />

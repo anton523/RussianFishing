@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function ShippedHook({ hooks }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -48,7 +48,7 @@ export function ShippedHook({ hooks }) {
         {
           hooks.map(x => {
             if (x.type === 'Shipped') {
-              return <tr>
+              return <tr key={x.id}>
                 <td>
                   {x.name}
                 </td>

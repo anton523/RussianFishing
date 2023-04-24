@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function RotatingBaits({ baits }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -33,7 +33,7 @@ export function RotatingBaits({ baits }) {
         {
           baits.map(bait => {
             if (bait.type === 'Rotating') {
-              return <tr>
+              return <tr key={bait.id}>
                 <td>
                   {bait.name}
                 </td>

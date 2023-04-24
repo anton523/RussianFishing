@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function PowerCoils({ coils }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -44,8 +44,8 @@ export function PowerCoils({ coils }) {
       <tbody>
         {
           coils.map(coil => {
-            if (coil.coilType === 'Power') {
-              return <tr>
+            return (
+              <tr key={coil.id}>
                 <td>
                   {coil.name}
                 </td>
@@ -80,7 +80,7 @@ export function PowerCoils({ coils }) {
                   {coil.goldPrice}
                 </td>
               </tr>
-            }
+            );
           })
         }
       </tbody>

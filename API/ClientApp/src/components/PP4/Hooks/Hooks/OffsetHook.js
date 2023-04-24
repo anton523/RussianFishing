@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function OffsetHook({ hooks }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -42,7 +42,7 @@ export function OffsetHook({ hooks }) {
         {
           hooks.map(x => {
             if (x.type === 'Offset') {
-              return <tr>
+              return <tr key={x.id}>
                 <td>
                   {x.name}
                 </td>

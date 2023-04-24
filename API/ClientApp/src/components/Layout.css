@@ -1,3 +1,49 @@
 .main {
   min-width: "600px";
+  padding-top: 1.5rem;
+}
+
+@media screen and (max-width: 1520px) {
+  #layout .left-side {
+    width: '10%';
+  }
+
+  #layout .right-side {
+    width: '10%';
+  }
+
+  #layout .content {
+    width: 80% !important;
+    padding: 0 2rem;
+  }
+}
+
+@media screen and (max-width: 1350px) {
+  #layout .left-side {
+    width: '5%';
+  }
+
+  #layout .right-side {
+    width: '5%';
+  }
+
+  #layout .content {
+    width: 90% !important;
+    padding: 0 2rem;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  #layout .left-side {
+    display: none;
+  }
+
+  #layout .right-side {
+    display: none;
+  }
+
+  #layout .content {
+    width: 100% !important;
+    padding: 0 2rem;
+  }
 }

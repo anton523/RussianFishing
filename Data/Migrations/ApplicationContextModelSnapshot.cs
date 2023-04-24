@@ -199,6 +199,9 @@ namespace Data.Migrations
                     b.Property<double>("L3")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("MapId")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -211,6 +214,8 @@ namespace Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MapId");
 
                     b.ToTable("Fishes");
                 });
@@ -558,6 +563,35 @@ namespace Data.Migrations
                     b.ToTable("Hooks");
                 });
 
+            modelBuilder.Entity("Core.Domains.Maps.Map", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("MapImage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleImage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Maps");
+                });
+
             modelBuilder.Entity("Core.Domains.Posts.Post", b =>
                 {
                     b.Property<string>("Id")
@@ -725,6 +759,36 @@ namespace Data.Migrations
                     b.ToTable("FishUnnaturalBait");
                 });
 
+            modelBuilder.Entity("PostUser", b =>
+                {
+                    b.Property<string>("LikesPostsId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UsersLikesId")
+                        .HasColumnType("text");
+
+                    b.HasKey("LikesPostsId", "UsersLikesId");
+
+                    b.HasIndex("UsersLikesId");
+
+                    b.ToTable("PostUser");
+                });
+
+            modelBuilder.Entity("PostUser1", b =>
+                {
+                    b.Property<string>("UsersViewsId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ViewsPostsId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UsersViewsId", "ViewsPostsId");
+
+                    b.HasIndex("ViewsPostsId");
+
+                    b.ToTable("PostUser1");
+                });
+
             modelBuilder.Entity("Core.Domains.Comments.Comment", b =>
                 {
                     b.HasOne("Core.Domains.Users.User", "Author")
@@ -742,6 +806,13 @@ namespace Data.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Core.Domains.Fishes.Fish", b =>
+                {
+                    b.HasOne("Core.Domains.Maps.Map", null)
+                        .WithMany("Fishes")
+                        .HasForeignKey("MapId");
                 });
 
             modelBuilder.Entity("Core.Domains.Posts.Post", b =>
@@ -783,6 +854,41 @@ namespace Data.Migrations
                         .HasForeignKey("UnnaturalBaitsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PostUser", b =>
+                {
+                    b.HasOne("Core.Domains.Posts.Post", null)
+                        .WithMany()
+                        .HasForeignKey("LikesPostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Domains.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersLikesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PostUser1", b =>
+                {
+                    b.HasOne("Core.Domains.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersViewsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Domains.Posts.Post", null)
+                        .WithMany()
+                        .HasForeignKey("ViewsPostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Domains.Maps.Map", b =>
+                {
+                    b.Navigation("Fishes");
                 });
 
             modelBuilder.Entity("Core.Domains.Posts.Post", b =>

@@ -1,8 +1,12 @@
 import MainContainer from './src/navigation/MainContainer';
+import { NativeBaseProvider } from 'native-base';
 
 const App = () => {
   return (
-    <MainContainer />
+    <NativeBaseProvider>
+      <MainContainer />
+    </NativeBaseProvider>
+
   );
 }
 

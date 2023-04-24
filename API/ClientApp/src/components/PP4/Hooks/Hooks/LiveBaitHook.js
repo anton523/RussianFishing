@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function LiveBaitHook({ hooks }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -36,7 +36,7 @@ export function LiveBaitHook({ hooks }) {
         {
           hooks.map(x => {
             if (x.type === 'LiveBait') {
-              return <tr>
+              return <tr key={x.id}>
                 <td>
                   {x.name}
                 </td>

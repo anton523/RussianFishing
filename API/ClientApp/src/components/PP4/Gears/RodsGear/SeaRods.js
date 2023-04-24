@@ -1,9 +1,9 @@
 import React from 'react';
 import { Table } from 'reactstrap';
 
-export function SeaRods({rods}) {
+export function SeaRods({ rods }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -56,8 +56,8 @@ export function SeaRods({rods}) {
       <tbody>
         {
           rods.map(rod => {
-            if (rod.type === 'Sea') {
-              return <tr>
+            return (
+              <tr key={rod.id}>
                 <td>
                   {rod.name}
                 </td>
@@ -104,7 +104,7 @@ export function SeaRods({rods}) {
                   {rod.silverPrice}
                 </td>
               </tr>
-            }
+            );
           })
         }
       </tbody>

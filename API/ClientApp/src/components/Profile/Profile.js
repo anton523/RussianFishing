@@ -4,6 +4,7 @@ import { ProfileInfo } from './ProfileInfo';
 import { ProfileEdit } from './ProfileEdit';
 import { UserContext } from '../../contexts/User';
 import { Loading } from '../../addons/Loading';
+import './Profile.css';
 
 const items = ['Информация', 'Редактирование']
 
@@ -11,45 +12,49 @@ export function Profile() {
   const [selected, setSelected] = useState(items[0]);
   const { user, changeUser } = useContext(UserContext);
 
-  if (user === null){
+  if (user === null) {
     return <Loading></Loading>
   }
 
   return (
-    <div style={{ display: 'flex', gap: '50px' }}>
-      <Container className='border box-shadow mb-3' style={{
-        height: '300px',
-        width: '25%',
+    <div style={{ display: 'flex', gap: '2rem' }}>
+      <Container className='border box-shadow mb-3 bg-light' style={{
+        width: '40%',
+        height: 'min-content',
         minWidth: '150px',
-        backgroundColor: 'rgb(238,238,238)',
-        margin: '0',
         border: 'solid 1px lightgray',
-        textAlign: 'center'
+        borderRadius: '5px',
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '1rem'
       }}>
-        <div style={{ width: '100px', height: '100px', margin: 'auto', marginTop: '15px' }}>
-          <img style={{ width: '100%', height: '100%', objectFit: 'fill' }} src={user.avatarUri ? user.avatarUri : '/imgs/profile.png'} />
+        <div style={{ paddingTop: '1rem' }}>
+          <img width='100%' style={{
+            borderRadius: '5px'
+          }} src={user.avatarUri ? user.avatarUri : '/imgs/profile.png'} />
         </div>
-        <div style={{ color: '#1F1F1F', paddingTop: '10px', textAlign: 'center' }}>
-          {user.login}
+        <div style={{ color: '#1F1F1F', textAlign: 'center' }}>
+          <h4>{user.login}</h4>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '15px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center', padding: '0 15px', fontSize: '13px', borderRight: 'solid 1px lightgray' }}>
-            <span>0</span>
-            <span>Подписчики</span>
+        <div className='media'>
+          <div className='media-item'>
+            <div>0</div>
+            <div>Подписчики</div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center', padding: '0 15px', fontSize: '13px' }}>
-            <span>0</span>
-            <span>Подписки</span>
+          <div className='media-item'>
+            <div>0</div>
+            <div>Подписки</div>
           </div>
         </div>
         {
           selected === items[0]
-            ? <Button outline block style={{ position: 'relative', bottom: '-5px' }} onClick={() => setSelected(items[1])}>Редактировать профиль</Button>
-            : <Button outline block style={{ position: 'relative', bottom: '-5px' }} onClick={() => setSelected(items[0])}>Отмена</Button>
+            ? <Button block style={{ marginTop: '2rem', marginBottom: '1rem' }} outline onClick={() => setSelected(items[1])}>Редактировать профиль</Button>
+            : <Button block style={{ marginTop: '2rem', marginBottom: '1rem' }} outline onClick={() => setSelected(items[0])}>Отмена</Button>
         }
-
       </Container>
-      <div style={{ width: '100%', minWidth: '175px' }}>
+      <div style={{ width: '100%' }}>
         {
           selected === items[0] ? <ProfileInfo user={user} /> : <ProfileEdit changeUser={changeUser} />
         }

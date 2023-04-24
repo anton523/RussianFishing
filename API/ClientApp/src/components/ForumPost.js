@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardHeader, CardImg, CardBody, CardFooter, CardTitle, CardText, Input, Alert } from 'reactstrap';
-import { MdDateRange, MdVisibility, MdComment, MdOutlineFavorite, MdShare } from "react-icons/md";
-import { getPostById } from '../utils/PostApi';
+import { MdDateRange, MdVisibility, MdComment, MdOutlineFavorite, MdShare, MdFavorite } from "react-icons/md";
+import { addOrRemoveLikePost, addViewPost, getPostById } from '../utils/PostApi';
 import { createComment } from '../utils/CommentsApi';
 
 import './ForumPost.css';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/Auth';
 
 
 const ForumPost = () => {
@@ -13,12 +15,17 @@ const ForumPost = () => {
   const [post, setPost] = useState(null);
   const [displayAlertCopy, setDisplayAlertCopy] = useState(false);
   const [comments, setComments] = useState([]);
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getPostById(id).then(post => {
       setComments(post.comments);
       setPost(post);
     })
+    if (auth.authStatus !== false) {
+      addViewPost(id);
+    }
   }, [id]);
 
   const [comment, setComment] = useState('');
@@ -47,6 +54,32 @@ const ForumPost = () => {
       setDisplayAlertCopy(false);
     }, 2000)
   };
+
+  const handleLike = (id) => {
+    if (auth.authStatus === false) {
+      navigate('/login', { replace: false });
+      return;
+    }
+    addOrRemoveLikePost(id).then(flag => {
+      if (flag) {
+        setPost(prev => {
+          return {
+            ...prev,
+            likes: prev.likes + 1,
+            isCurrentUserLike: true
+          }
+        });
+      } else {
+        setPost(prev => {
+          return {
+            ...prev,
+            likes: prev.likes - 1,
+            isCurrentUserLike: false
+          }
+        });
+      }
+    });
+  }
 
   if (post === null) {
     return <></>;
@@ -88,7 +121,7 @@ const ForumPost = () => {
               }}>
                 <MdVisibility />
                 <div>
-                  {post.views} просмотров
+                  {post.views} <span className='views-text'>просмотров</span>
                 </div>
               </div>
               <div id='forum-post-comments-count' style={{
@@ -98,7 +131,7 @@ const ForumPost = () => {
               }}>
                 <MdComment />
                 <div>
-                  {post.comments.length} комментариев
+                  {post.comments.length} <span className='comments-text'>комментариев</span>
                 </div>
               </div>
               <div id='forum-post-date' style={{
@@ -124,7 +157,7 @@ const ForumPost = () => {
               {post.title}
             </div>
           </CardTitle>
-          <CardText>
+          <CardText tag='div'>
             <div id='forum-content-inner' dangerouslySetInnerHTML={{ __html: post.text }} style={{
               padding: '0.75rem',
             }}>
@@ -139,9 +172,10 @@ const ForumPost = () => {
             <Button outline style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem'
-            }}>
-              <MdOutlineFavorite />
+              gap: '0.5rem',
+              boxShadow: 'none'
+            }} onClick={() => handleLike(post.id)}>
+              <MdFavorite className={`${post.isCurrentUserLike ? 'text-danger' : ''}`} />
               <div>Лайк</div>
             </Button>
             <Button outline
@@ -149,7 +183,8 @@ const ForumPost = () => {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem'
+                gap: '0.5rem',
+                boxShadow: 'none'
               }}>
               <MdShare />
               <div>Поделиться</div>
@@ -176,7 +211,7 @@ const ForumPost = () => {
               marginLeft: 'auto',
               alignItems: 'center'
             }}>
-              <MdOutlineFavorite className='text-danger' />
+              <MdFavorite className='text-danger' />
               <div style={{
                 fontSize: '0.85rem',
                 cursor: 'default'
@@ -231,7 +266,7 @@ const ForumPost = () => {
             {
               comments.map((comment, index) => {
                 return (
-                  <ForumComment comment={comment} last={index === post.comments.length - 1} />
+                  <ForumComment key={comment.id} comment={comment} last={index === post.comments.length - 1} />
                 );
               })
             }

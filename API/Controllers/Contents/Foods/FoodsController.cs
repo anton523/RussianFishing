@@ -1,3 +1,4 @@
+using System.Data.Entity.Core;
 using API.Controllers.Contents.Foods.Dto;
 using AutoMapper;
 using Core;
@@ -40,6 +41,19 @@ public class FoodsController : ControllerBase
         var alcohol = _mapper.Map<Alcohol>(createAlcoholDto);
 
         await _applicationContext.Alcohols.AddAsync(alcohol, cancellationToken);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpDelete("alcohol/{id}")]
+    public async Task DeleteAlcohol(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await _applicationContext.Alcohols.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (entity is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.Alcohols.Remove(entity);
         await _unitOfWork.SaveChange();
     }
 }

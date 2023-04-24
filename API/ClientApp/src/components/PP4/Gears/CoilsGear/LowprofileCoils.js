@@ -3,7 +3,7 @@ import { Table } from 'reactstrap';
 
 export function LowprofileCoils({ coils }) {
   return (
-    <Table bordered>
+    <Table bordered responsive>
       <thead>
         <tr>
           <th>
@@ -44,8 +44,8 @@ export function LowprofileCoils({ coils }) {
       <tbody>
         {
           coils.map(coil => {
-            if (coil.coilType === 'Lowprofile') {
-              return <tr>
+            return (
+              <tr key={coil.id}>
                 <td>
                   {coil.name}
                 </td>
@@ -80,7 +80,7 @@ export function LowprofileCoils({ coils }) {
                   {coil.goldPrice}
                 </td>
               </tr>
-            }
+            );
           })
         }
       </tbody>

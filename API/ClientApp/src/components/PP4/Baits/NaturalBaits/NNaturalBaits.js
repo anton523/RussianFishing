@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Table } from 'reactstrap';
 
 export function NNaturalBaits({baits}) {
   return (
-    <Table bordered>
+    <Table responsive bordered>
       <thead>
         <tr>
           <th>
@@ -33,7 +33,7 @@ export function NNaturalBaits({baits}) {
         {
           baits.map(bait => {
             if (bait.type === 'Natural') {
-              return <tr>
+              return <tr key={bait.id}>
                 <td>
                   {bait.name}
                 </td>

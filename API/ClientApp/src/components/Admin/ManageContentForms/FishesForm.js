@@ -70,8 +70,8 @@ export function FishesForm() {
     <div style={{ display: 'flex', flexDirection: 'row', gap: '50px' }}>
       <div>
         <ListGroup>
-          <ListGroupItem action tag="button" color='secondary'>
-            Добавить
+          <ListGroupItem action tag="button" color='primary'>
+            Добавить рыбу
           </ListGroupItem>
           {
             fishes.map(fish => {

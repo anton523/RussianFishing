@@ -1,0 +1,25 @@
+.button-container-vertical{
+  display: none;
+}
+
+@media screen and (max-width: 800px) {
+  .button-container {
+    display: none;
+  }
+
+  .button-container-vertical{
+    display: block;
+  }
+
+  .tool-main {
+    flex-direction: column;
+  }
+
+  .tool-image-container {
+    width: 100% !important;
+  }
+
+  .tool-info-container {
+    width: 100% !important;
+  }
+}
