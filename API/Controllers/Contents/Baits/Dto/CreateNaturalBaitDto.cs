@@ -7,10 +7,10 @@ public class CreateNaturalBaitDto
     public NaturalType Type { get; set; }
     public string Name { get; set; }
     public string? Sort { get; set; }
-    public double? SilverPrice { get; set; }
-    public double? GoldPrice { get; set; }
+    public string? SilverPrice { get; set; }
+    public string? GoldPrice { get; set; }
     public int? Skill { get; set; }
-    public double? Weight { get; set; }
+    public string? Weight { get; set; }
     public string? Bait { get; set; }
     
     public string? Manufacturer { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Core.Domains.Baits;
+using Core.Domains.Maps;
 
 namespace Core.Domains.Fishes;
 
@@ -18,10 +19,12 @@ public class Fish : BaseEntity
 
     public virtual ICollection<NaturalBait> NaturalBaits { get; set; }
     public virtual ICollection<UnnaturalBait> UnnaturalBaits { get; set; }
+    public virtual ICollection<Map> Maps { get; set; }
 
     public Fish()
     {
         NaturalBaits = new List<NaturalBait>();
         UnnaturalBaits = new List<UnnaturalBait>();
+        Maps = new List<Map>();
     }
 }

@@ -40,6 +40,18 @@ public class ToolsController : ControllerBase
         await _unitOfWork.SaveChange();
     }
     
+    [HttpPut]
+    [Route("slingshots/{id}")]
+    public async Task CreateSlingshot(string id, CreateSlingshotDto createSlingshotDto, CancellationToken cancellationToken)
+    {
+        var slingshot = _mapper.Map<Slingshot>(createSlingshotDto);
+        slingshot.Id = id;
+
+        _applicationContext.Slingshots.Update(slingshot);
+
+        await _unitOfWork.SaveChange();
+    }
+    
     [HttpGet]
     [Route("slingshots")]
     public async Task<IEnumerable<Slingshot>> GetAllSlingshots(CancellationToken cancellationToken)
@@ -70,6 +82,27 @@ public class ToolsController : ControllerBase
         tool.Image = avatarUrl;
 
         await _applicationContext.Tools.AddAsync(tool, cancellationToken);
+        
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpPut]
+    [Route("tools/{id}")]
+    public async Task UpdateTool(string id, [FromForm]CreateToolDto createToolDto, CancellationToken cancellationToken)
+    {
+        var avatarUrl = string.Empty;
+        
+        if (createToolDto.Image is not null)
+        {
+            avatarUrl = await ImageUploader.UploadImage(createToolDto.Image, _webHostEnv.WebRootPath,
+                cancellationToken);
+        }
+        
+        var tool = _mapper.Map<Tool>(createToolDto);
+        tool.Image = avatarUrl;
+        tool.Id = id;
+
+        _applicationContext.Tools.Update(tool);
         
         await _unitOfWork.SaveChange();
     }

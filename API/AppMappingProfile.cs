@@ -33,6 +33,11 @@ public class AppMappingProfile : Profile
                 x => x.Image, 
                 opt => opt.Ignore()
                 );
+        CreateMap<CreateNaturalBaitDto, NaturalBait>()
+            .ForMember(
+                x => x.Image, 
+                opt => opt.Ignore()
+            );
         CreateMap<Alcohol, CreateAlcoholDto>().ReverseMap();
         CreateMap<Coil, CreateCoilDto>().ReverseMap();
         CreateMap<Rod, CreateRodDto>().ReverseMap();

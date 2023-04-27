@@ -53,7 +53,7 @@ export function Fishes() {
   return (
     <div style={{ display: 'flex', gap: '15px' }}>
       <div style={{ flexShrink: '0' }} >
-        <ListGroup >
+        <ListGroup style={{ overflowY: 'auto', maxHeight: '500px' }} >
           {fishes.map(fish => {
             return (
               <ListGroupItem
@@ -69,14 +69,15 @@ export function Fishes() {
         </ListGroup>
       </div>
       <Row xs={amountColumns} className='gy-2'>
-        <Col style={{ flex: '0 1 auto' }}>
+        <Col style={{ flex: '0 1 auto', paddingRight: 0 }}>
           <Card inverse style={{ height: '100%' }}>
             <CardImg
               alt={selectedFish.name}
               src={selectedFish.image}
               style={{
                 objectFit: 'contain',
-                height: '100%'
+                height: '100%',
+                minHeight: '135px'
               }}
               width="100%"
             />

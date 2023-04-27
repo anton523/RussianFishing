@@ -3,26 +3,34 @@ import { Form, Col, FormGroup, Label, Input, ListGroup, ListGroupItem, Button, C
 import { getAllFishes } from '../../../utils/FishApi';
 import InputAuto from '../../../addons/InputAuto';
 import MapApi from '../../../utils/MapsApi';
+import { urlToObject } from '../../../addons/Functions/UrlToObject';
 
-const maps = [];
+const defaultFormData = {
+  Id: '',
+  Name: '',
+  Description: '',
+  TitleImage: '',
+  MapImage: ''
+};
+
+const formGroups = ['Add', 'Update'];
 
 const MapsForm = () => {
-  const [formData, setFormData] = useState({
-    Name: '',
-    Description: '',
-    TitleImage: '',
-    MapImage: ''
-  });
-
+  const [formData, setFormData] = useState(defaultFormData);
   const [fishes, setFishes] = useState([]);
+  const [maps, setMaps] = useState([]);
   const [selectedFishes, setSelectedFishes] = useState([]);
   const [autoinputData, setAutoinputData] = useState([]);
+  const [formGroup, setFormGroup] = useState(formGroups[0]);
 
   useEffect(() => {
     getAllFishes().then(data => {
       setFishes(data);
       setAutoinputData(data.map(x => x.shortName));
     });
+    MapApi.GetAll().then(data => {
+      setMaps(data);
+    })
   }, []);
 
   const handleSubmit = async (event) => {
@@ -35,14 +43,41 @@ const MapsForm = () => {
       idFishes.push(id);
     }
 
-    let success = await MapApi.Create(formData.Name, formData.Description, formData.TitleImage, formData.MapImage, idFishes);
+    let success = formGroup === formGroups[0]
+      ? await MapApi.Create(formData.Name, formData.Description, formData.TitleImage, formData.MapImage, idFishes)
+      : await MapApi.Update(formData.Id, formData.Name, formData.Description, formData.TitleImage, formData.MapImage, idFishes);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
+
+  const handleClickMap = async (obj) => {
+    setFormData({
+      Id: obj.id,
+      Name: obj.name,
+      Description: obj.description,
+      TitleImage: await urlToObject(obj.titleImage),
+      MapImage: await urlToObject(obj.mapImage)
+    });
+
+    setFormGroup(formGroups[1]);
+  };
+
+  const handleDelete = async (event) => {
+    MapApi.Delete(formData.Id).then(isDeleted => {
+      if (isDeleted) {
+        alert('Удалена');
+        setMaps(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[0]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
 
   const handleRemove = (value) => {
     setSelectedFishes(fishes => fishes.filter(fish => fish !== value));
@@ -69,7 +104,15 @@ const MapsForm = () => {
           </ListGroupItem>
           {
             maps.map(map => {
-              return <ListGroupItem key={map} action tag="button">{map}</ListGroupItem>
+              return (
+                <ListGroupItem
+                  action
+                  key={map.id}
+                  tag="button"
+                  onClick={() => handleClickMap(map)}>
+                  {map.name}
+                </ListGroupItem>
+              );
             })
           }
         </ListGroup>
@@ -147,9 +190,12 @@ const MapsForm = () => {
             </Container>
           </div>
         </FormGroup>
-        <Button type="submit">
-          Отправить
-        </Button>
+        <div style={{ display: 'flex' }}>
+          <Button type="submit">{formGroup === formGroups[0] ? 'Отправить' : 'Изменить'}</Button>
+          {
+            formGroup === formGroups[1] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+          }
+        </div>
       </Form>
     </div>
   );

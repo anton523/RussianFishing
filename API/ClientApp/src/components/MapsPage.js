@@ -68,7 +68,7 @@ const Map = ({ map }) => {
           boxShadow: '0 0 0.25rem gray'
         }} />
       </div>
-      <div style={{
+      {/* <div style={{
         position: 'absolute',
         bottom: 0,
         right: 0,
@@ -79,7 +79,7 @@ const Map = ({ map }) => {
         textShadow: '0 0 5px black'
       }}>
         {map.name}
-      </div>
+      </div> */}
     </Link>
   );
 };

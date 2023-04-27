@@ -1,3 +1,3 @@
 export default function DoubleToString(number){
-  return ('' + number).replace('.', ',');
+  return ('' + number).replace(',', '.');
 }

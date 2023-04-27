@@ -72,6 +72,45 @@ export const getUser = async function(){
   return null;
 }
 
+export const getAllUsers = async function() {
+  var response = await fetch('api/users/all', {
+    method: 'GET'
+  });
+
+  if (response.status === 200){
+    return await response.json();
+  }
+
+  throw new Error();
+}
+
+export const deleteUser = async function(userId){
+  let response = await fetch(`api/users/${userId}`, {
+    method: 'DELETE'
+  })
+
+  return response.status === 200;
+}
+
+export const updateUserRole = async function(userId, role) {
+  var json = JSON.stringify({
+    id: userId,
+    role: role
+  })
+
+  console.log(json);
+
+  let response = await fetch(`api/users/update-role`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: json
+  })
+
+  return response.status === 200;
+}
+
 export const updateUser = async function(user){
   var formData = new FormData();
   console.log(user);

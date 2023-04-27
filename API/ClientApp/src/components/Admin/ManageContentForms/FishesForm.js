@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Col, FormGroup, Label, Input, ListGroup, ListGroupItem, FormText, Button } from 'reactstrap';
-import { createFish } from '../../../utils/FishApi';
+import { createFish, deleteFish, getAllFishes, updateFish } from '../../../utils/FishApi';
+import { urlToObject } from '../../../addons/Functions/UrlToObject';
 
-const fishes = []
 const items = [
   {
     name: 'Фарм',
@@ -22,31 +22,82 @@ const items = [
   },
 ]
 
+const defaultFormData = {
+  Id: '',
+  ShortName: '',
+  Name: '',
+  L1: 0,
+  L2: 0,
+  L3: 0,
+  Farm: 1,
+  Experience: 1,
+  Biting: 1,
+  Trophy: 1,
+  Description: '',
+  Image: ''
+};
+
+const formGroups = ['Add', 'Update'];
+
 export function FishesForm() {
-  const [formData, setFormData] = useState({
-    ShortName: '',
-    Name: '',
-    L1: 0,
-    L2: 0,
-    L3: 0,
-    Farm: 1,
-    Experience: 1,
-    Biting: 1,
-    Trophy: 1,
-    Description: '',
-    Image: ''
-  });
+  const [formData, setFormData] = useState(defaultFormData);
+  const [fishes, setFishes] = useState([]);
+  const [formGroup, setFormGroup] = useState(formGroups[0]);
+
+  useEffect(() => {
+    getAllFishes().then(fishes => {
+      setFishes(fishes);
+    });
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let success = await createFish(formData);
+
+    let success = formGroup === formGroups[0] ? await createFish(formData) : await updateFish(formData.Id, formData);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
+
+  const handleDelete = async (event) => {
+    deleteFish(formData.Id).then(isDeleted => {
+      if (isDeleted){
+        alert('Удалена');
+        setFishes(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[0]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
+
+  const handleClickFish = async (fish) => {
+    setFormData({
+      Id: fish.id,
+      ShortName: fish.shortName,
+      Name: fish.name,
+      L1: fish.l1,
+      L2: fish.l2,
+      L3: fish.l3,
+      Farm: fish.farm,
+      Experience: fish.experience,
+      Biting: fish.biting,
+      Trophy: fish.trophy,
+      Description: fish.description,
+      Image: await urlToObject(fish.image)
+    });
+
+    setFormGroup(formGroups[1]);
+  };
+
+  const handleClickAddFish = () => {
+    setFormData(defaultFormData);
+    setFormGroup(formGroups[0]);
+  }
 
   const handleImageUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -70,12 +121,24 @@ export function FishesForm() {
     <div style={{ display: 'flex', flexDirection: 'row', gap: '50px' }}>
       <div>
         <ListGroup>
-          <ListGroupItem action tag="button" color='primary'>
+          <ListGroupItem
+            onClick={handleClickAddFish}
+            action
+            tag="button"
+            color='primary'>
             Добавить рыбу
           </ListGroupItem>
           {
             fishes.map(fish => {
-              return <ListGroupItem key={fish} action tag="button">{fish}</ListGroupItem>
+              return (
+                <ListGroupItem
+                  action
+                  key={fish.id}
+                  tag="button"
+                  onClick={() => handleClickFish(fish)}>
+                  {fish.shortName}
+                </ListGroupItem>
+              );
             })
           }
         </ListGroup>
@@ -180,7 +243,7 @@ export function FishesForm() {
           <Input
             id="description"
             name="Description"
-            placeholder="Водиться в озере ..."
+            placeholder="Водится в озере..."
             type="textarea"
             value={formData.Description}
             onChange={handleChange}
@@ -197,9 +260,12 @@ export function FishesForm() {
             onChange={handleImageUpload}
           />
         </FormGroup>
-        <Button type="submit">
-          Отправить
-        </Button>
+        <div style={{ display: 'flex' }}>
+          <Button type="submit">{formGroup === formGroups[0] ? 'Отправить' : 'Изменить'}</Button>
+          {
+            formGroup === formGroups[1] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+          }
+        </div>
       </Form>
     </div>
   );

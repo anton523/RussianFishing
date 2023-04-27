@@ -45,6 +45,17 @@ public class GearsController : ControllerBase
         await _unitOfWork.SaveChange();
     }
     
+    [HttpPut]
+    [Route("coils/{id}")]
+    public async Task UpdateCoil(string id, CreateCoilDto createCoilDto, CancellationToken cancellationToken)
+    {
+        var coil = _mapper.Map<Coil>(createCoilDto);
+        coil.Id = id;
+            
+        _applicationContext.Coils.Update(coil);
+        await _unitOfWork.SaveChange();
+    }
+    
     [HttpGet]
     [Route("rods")]
     public async Task<IEnumerable<Rod>> GetAllRods(CancellationToken cancellationToken)
@@ -59,6 +70,17 @@ public class GearsController : ControllerBase
         var rod = _mapper.Map<Rod>(createRod);
 
         await _applicationContext.Rods.AddAsync(rod, cancellationToken);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpPut]
+    [Route("rods/{id}")]
+    public async Task UpdateRod(string id, CreateRodDto createRod, CancellationToken cancellationToken)
+    {
+        var rod = _mapper.Map<Rod>(createRod);
+        rod.Id = id;
+        
+        _applicationContext.Rods.Update(rod);
         await _unitOfWork.SaveChange();
     }
     

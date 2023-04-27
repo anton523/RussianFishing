@@ -46,6 +46,17 @@ public class HooksController : ControllerBase
         await _unitOfWork.SaveChange();
     }
     
+    [HttpPut]
+    [Route("hooks/{id}")]
+    public async Task UpdateHook(string id, CreateHookDto createHookDto, CancellationToken cancellationToken)
+    {
+        var hook = _mapper.Map<Hook>(createHookDto);
+        hook.Id = id;
+        
+        _applicationContext.Hooks.Update(hook);
+        await _unitOfWork.SaveChange();
+    }
+    
     [HttpGet]
     [Route("fishing-lines")]
     public async Task<IEnumerable<FishingLine>> GetAllFishingLines(CancellationToken cancellationToken)
@@ -60,6 +71,17 @@ public class HooksController : ControllerBase
         var fishingLine = _mapper.Map<FishingLine>(createFishingLineDto);
 
         await _applicationContext.FishingLines.AddAsync(fishingLine, cancellationToken);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpPut]
+    [Route("fishing-lines/{id}")]
+    public async Task UpdateFishingLine(string id, CreateFishingLineDto createFishingLineDto, CancellationToken cancellationToken)
+    {
+        var fishingLine = _mapper.Map<FishingLine>(createFishingLineDto);
+        fishingLine.Id = id;
+        
+        _applicationContext.FishingLines.Update(fishingLine);
         await _unitOfWork.SaveChange();
     }
     

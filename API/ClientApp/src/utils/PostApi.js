@@ -72,3 +72,11 @@ export const uploadPostImage = async function (formData) {
 
   return null;
 }
+
+export const deletePostByid = async function (id) {
+  let response = await fetch(`api/posts/${id}`, {
+    method: 'DELETE',
+  })
+
+  return response.status === 200;
+}

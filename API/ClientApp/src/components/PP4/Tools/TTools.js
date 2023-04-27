@@ -63,7 +63,7 @@ export function TTools() {
           }}>
             <CardImg
               alt={selectedTool.name}
-              src={new URL(selectedTool.image, 'https://localhost:44490').href}
+              src={selectedTool.image}
               style={{
                 width: '100%',
               }}

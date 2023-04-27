@@ -1,38 +1,36 @@
 import React, { useState } from "react";
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { createFishingline } from "../../../../utils/HooksApi";
+import { createFishingline, deleteFishingLine, updateFishingline } from "../../../../utils/HooksApi";
 
-export function FishingLinesForm() {
-  const [formData, setFormData] = useState({
-    Name: '',
-    Sort: '',
-    Hardness: 0,
-    Thickness: 0,
-    Length1: 0,
-    Price1: 0,
-    Length2: 0,
-    Price2: 0,
-    Length3: 0,
-    Price3: 0,
-    Length4: 0,
-    Price4: 0,
-  });
-
+export function FishingLinesForm({ formData, setFormData, formGroup, formGroups, setObj, setFormGroup, defaultFormData }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let success = await createFishingline(formData);
+    let success = formGroup === formGroups[1] ? await createFishingline(formData) : await updateFishingline(formData.Id, formData);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
 
+  const handleDelete = async (event) => {
+    deleteFishingLine(formData.Id).then(isDeleted => {
+      if (isDeleted) {
+        alert('Удалена');
+        setObj(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[1]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    if (name.startsWith('Length') || name.startsWith('Price')){
+    if (name.startsWith('Length') || name.startsWith('Price')) {
       setFormData({ ...formData, [name]: parseInt(value) });
       return;
     }
@@ -198,9 +196,12 @@ export function FishingLinesForm() {
           onChange={handleChange}
         />
       </FormGroup>
-      <Button type="submit">
-        Отправить
-      </Button>
+      <div style={{ display: 'flex' }}>
+        <Button type="submit">{formGroup === formGroups[1] ? 'Отправить' : 'Изменить'}</Button>
+        {
+          formGroup === formGroups[3] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+        }
+      </div>
     </Form>
   );
 }

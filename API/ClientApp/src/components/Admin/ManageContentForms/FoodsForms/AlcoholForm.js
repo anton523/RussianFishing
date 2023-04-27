@@ -1,38 +1,37 @@
 import React, { useState } from "react";
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { createAlcohol } from "../../../../utils/FoodsApi";
+import { createAlcohol, deleteAlcohol, updateAlcohol } from "../../../../utils/FoodsApi";
 
-export function AlcoholForm() {
-  const [formData, setFormData] = useState({
-    Name: '',
-    Shop: '',
-    Pond: '',
-    Skill: 0,
-    Max: 0,
-    Hours: 0,
-    Portions: 0,
-    Ostrog: 0,
-    Portion: 0,
-    Full: 0,
-    PerOnePercent: 0,
-    PerOnePercent2: 0,
-  });
-
+export function AlcoholForm({ formData, setFormData, formGroup, formGroups, setObj, setFormGroup, defaultFormData }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let success = await createAlcohol(formData);
+
+    let success = formGroup === formGroups[0] ? await createAlcohol(formData) : await updateAlcohol(formData.Id, formData);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
 
+  const handleDelete = async (event) => {
+    deleteAlcohol(formData.Id).then(isDeleted => {
+      if (isDeleted) {
+        alert('Удалена');
+        setObj(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[0]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    if (name === 'Hours' || name === 'Portions' || name === 'Full'){
+    if (name === 'Hours' || name === 'Portions' || name === 'Full') {
       setFormData({ ...formData, [name]: parseInt(value) });
       return;
     }
@@ -211,9 +210,12 @@ export function AlcoholForm() {
           onChange={handleChange}
         />
       </FormGroup>
-      <Button type="submit">
-        Отправить
-      </Button>
+      <div style={{ display: 'flex' }}>
+        <Button type="submit">{formGroup === formGroups[0] ? 'Отправить' : 'Изменить'}</Button>
+        {
+          formGroup === formGroups[2] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+        }
+      </div>
     </Form>
   );
 }

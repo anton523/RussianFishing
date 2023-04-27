@@ -66,7 +66,7 @@ const AppRoutes = [
     path: '/pp4/gears',
     element: <Gears />,
     needForumActivity: false,
-    needAside: true
+    needAside: false
   },
   {
     path: '/pp4/baits',

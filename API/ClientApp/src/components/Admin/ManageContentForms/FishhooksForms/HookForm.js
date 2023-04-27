@@ -1,22 +1,11 @@
 import React, { useState } from "react";
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { createHook } from "../../../../utils/HooksApi";
+import { createHook, deleteHook, updateHook } from "../../../../utils/HooksApi";
 
 const items = ["КЛАССИЧЕСКИЕ", "КАРПОВЫЕ", "ОГРУЖЁННЫЕ", "ТРОЙНИКИ", "ДЖИГ-ГОЛОВКИ", "ОФСЕТНЫЕ", "ЖИВЦОВЫЕ", "МОРСКИЕ"];
 
-export function HooksForm() {
+export function HooksForm({ formData, setFormData, formGroup, formGroups, setObj, setFormGroup, defaultFormData }) {
   const [selected, setSelected] = useState(items[0]);
-  const [formData, setFormData] = useState({
-    Type: 0,
-    Name: '',
-    Height: 0,
-    S24: 0, S22: 0, S20: 0, S19: 0, S18: 0, S17: 0,
-    S16: 0, S15: 0, S14: 0, S13: 0, S12: 0, S11: 0, S10: 0, S9: 0,
-    S8: 0, S7: 0, S6: 0, S5: 0, S4: 0, S3: 0, S2: 0, S1: 0,
-    S1Zero: 0, S2Zero: 0, S3Zero: 0,
-    S4Zero: 0, S5Zero: 0, S6Zero: 0, S8Zero: 0, S10Zero: 0,
-    S12Zero: 0,
-  });
 
   const s = [formData.S1, formData.S2, formData.S3, formData.S4, formData.S5, formData.S6, formData.S7,
   formData.S8, formData.S9, formData.S10, formData.S11, formData.S12, formData.S13,
@@ -29,14 +18,27 @@ export function HooksForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let success = await createHook(formData);
+    let success = formGroup === formGroups[0] ? await createHook(formData) : await updateHook(formData.Id, formData);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
+
+  const handleDelete = async (event) => {
+    deleteHook(formData.Id).then(isDeleted => {
+      if (isDeleted) {
+        alert('Удалена');
+        setObj(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[0]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -91,7 +93,7 @@ export function HooksForm() {
     }
 
     if (selected === items[7]) {
-        return;
+      return;
     }
 
     return <FormGroup key={x}>
@@ -142,7 +144,7 @@ export function HooksForm() {
       if (x === 1 || x === 7 || x === 9 || x === 11) {
         return;
       }
-  }
+    }
 
     return <FormGroup key={x}>
       <Label>
@@ -218,9 +220,12 @@ export function HooksForm() {
           return render2(x + 1)
         })
       }
-      <Button type="submit">
-        Отправить
-      </Button>
+      <div style={{ display: 'flex' }}>
+        <Button type="submit">{formGroup === formGroups[0] ? 'Отправить' : 'Изменить'}</Button>
+        {
+          formGroup === formGroups[2] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+        }
+      </div>
     </Form>
   );
 }

@@ -1,0 +1,18 @@
+@media screen and (max-width: 1200px) {
+  .forum-short-post {
+    width: 325px !important;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .forum-short-post {
+    width: 335px !important;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  #forum-header {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}

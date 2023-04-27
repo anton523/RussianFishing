@@ -1,4 +1,5 @@
-﻿using API.Controllers.Contents.Fishes.Dto;
+﻿using System.Globalization;
+using API.Controllers.Contents.Fishes.Dto;
 using AutoMapper;
 using Core;
 using Core.Domains.Fishes;
@@ -40,15 +41,39 @@ public class FishesController : ControllerBase
     
 
     [HttpPut("{id}")]
-    public async Task Update(FishDto userDto, CancellationToken cancellationToken)
+    public async Task Update(string id, [FromForm]CreateFishDto createFishDto, CancellationToken cancellationToken)
     {
-        await _fishService.Update(_mapper.Map<Fish>(userDto), cancellationToken);
+        var avatarUrl = string.Empty;
+        
+        if (createFishDto.Image is not null)
+        {
+            avatarUrl = await ImageUploader.UploadImage(createFishDto.Image, _webHostEnv.WebRootPath,
+                cancellationToken);
+        }
+        
+        var fish = new Fish
+        {
+            Id = id,
+            ShortName = createFishDto.ShortName,
+            Name = createFishDto.Name,
+            L1 = double.Parse(createFishDto.L1, CultureInfo.InvariantCulture),
+            L2 = double.Parse(createFishDto.L2, CultureInfo.InvariantCulture),
+            L3 = double.Parse(createFishDto.L3, CultureInfo.InvariantCulture),
+            Farm = createFishDto.Farm,
+            Biting = createFishDto.Biting,
+            Experience = createFishDto.Experience,
+            Trophy = createFishDto.Trophy,
+            Description = createFishDto.Description,
+            Image = avatarUrl
+        };
+        
+        await _fishService.Update(fish, cancellationToken);
     }
 
     [HttpDelete("{id}")]
-    public async Task Delete(string fishId, CancellationToken cancellationToken)
+    public async Task Delete(string id, CancellationToken cancellationToken)
     {
-        await _fishService.Delete(fishId, cancellationToken);
+        await _fishService.Delete(id, cancellationToken);
     }
 
     [HttpPost]
@@ -66,9 +91,9 @@ public class FishesController : ControllerBase
         {
             ShortName = createFishDto.ShortName,
             Name = createFishDto.Name,
-            L1 = createFishDto.L1,
-            L2 = createFishDto.L2,
-            L3 = createFishDto.L3,
+            L1 = double.Parse(createFishDto.L1, CultureInfo.InvariantCulture),
+            L2 = double.Parse(createFishDto.L2, CultureInfo.InvariantCulture),
+            L3 = double.Parse(createFishDto.L3, CultureInfo.InvariantCulture),
             Farm = createFishDto.Farm,
             Biting = createFishDto.Biting,
             Experience = createFishDto.Experience,

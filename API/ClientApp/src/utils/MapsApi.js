@@ -41,6 +41,26 @@ const Create = async (name, description, titleImage, mapImage, idFishes) => {
   return response.status === 200;
 };
 
+const Update = async (id, name, description, titleImage, mapImage, idFishes) => {
+  const formData = new FormData();
+
+  formData.append('Name', name);
+  formData.append('Description', description);
+  formData.append('TitleImage', titleImage);
+  formData.append('MapImage', mapImage);
+
+  for (var i = 0; i < idFishes.length; i++) {
+    formData.append('IdFishes[]', idFishes[i]);
+  }
+
+  const response = await fetch(`/api/maps/${id}`, {
+    method: 'PUT',
+    body: formData
+  });
+
+  return response.status === 200;
+};
+
 const Delete = async (id) => {
   const response = await fetch(`/api/maps/${id}`, {
     method: 'DELETE',
@@ -53,5 +73,6 @@ export default {
   GetAll,
   GetById,
   Create,
+  Update,
   Delete
 }

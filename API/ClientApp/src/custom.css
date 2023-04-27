@@ -3,6 +3,10 @@
   box-sizing: border-box;
 }
 
+td {
+  white-space: nowrap;
+}
+
 body, html, #root {
   margin: 0;
   padding: 0;

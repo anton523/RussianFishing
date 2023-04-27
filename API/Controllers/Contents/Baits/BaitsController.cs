@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity.Core;
+using System.Globalization;
 using API.Controllers.Contents.Baits.Dto;
 using AutoMapper;
 using Core;
@@ -43,10 +44,10 @@ public class BaitsController : ControllerBase
             Type = naturalBaitDto.Type,
             Name = naturalBaitDto.Name,
             Sort = naturalBaitDto.Sort,
-            SilverPrice = naturalBaitDto.SilverPrice,
-            GoldPrice = naturalBaitDto.GoldPrice,
+            SilverPrice = !string.IsNullOrEmpty(naturalBaitDto.SilverPrice) ? double.Parse(naturalBaitDto.SilverPrice, CultureInfo.InvariantCulture) : 0,
+            GoldPrice = !string.IsNullOrEmpty(naturalBaitDto.GoldPrice) ? double.Parse(naturalBaitDto.GoldPrice, CultureInfo.InvariantCulture) : 0,
             Skill = naturalBaitDto.Skill,
-            Weight = naturalBaitDto.Weight,
+            Weight = !string.IsNullOrEmpty(naturalBaitDto.Weight) ? double.Parse(naturalBaitDto.Weight, CultureInfo.InvariantCulture) : 0,
             Bait = naturalBaitDto.Bait,
             Manufacturer = naturalBaitDto.Manufacturer,
             Small = naturalBaitDto.Small,
@@ -99,6 +100,28 @@ public class BaitsController : ControllerBase
         return entities.Select(x => _mapper.Map<UnnaturalBait>(x)).ToList();
     }
 
+    [HttpPut]
+    [Route("unnatural/{id}")]
+    public async Task UpdateUnnaturalBait(string id, [FromForm] CreateUnnaturalBaitDto unnaturalBaitDto,
+        CancellationToken cancellationToken)
+    {
+        var avatarUrl = string.Empty;
+        
+        if (unnaturalBaitDto.Image is not null)
+        {
+            avatarUrl = await ImageUploader.UploadImage(unnaturalBaitDto.Image, _webHostEnv.WebRootPath,
+                cancellationToken);
+        }
+        
+        var unnaturalBait = _mapper.Map<UnnaturalBait>(unnaturalBaitDto);
+        unnaturalBait.Id = id;
+        unnaturalBait.Image = avatarUrl;
+
+        _applicationContext.UnnaturalBaits.Update(unnaturalBait);
+
+        await _unitOfWork.SaveChange();
+    }
+
     [HttpDelete("unnatural/{id}")]
     public async Task DeleteUnnaturalBait(string id, CancellationToken cancellationToken)
     {
@@ -109,6 +132,28 @@ public class BaitsController : ControllerBase
             throw new ObjectNotFoundException();
 
         _applicationContext.UnnaturalBaits.Remove(unnaturalBait);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpPut]
+    [Route("natural/{id}")]
+    public async Task UpdateNaturalBait(string id, [FromForm] CreateNaturalBaitDto naturalBaitDto,
+        CancellationToken cancellationToken)
+    {
+        var avatarUrl = string.Empty;
+        
+        if (naturalBaitDto.Image is not null)
+        {
+            avatarUrl = await ImageUploader.UploadImage(naturalBaitDto.Image, _webHostEnv.WebRootPath,
+                cancellationToken);
+        }
+        
+        var unnaturalBait = _mapper.Map<NaturalBait>(naturalBaitDto);
+        unnaturalBait.Id = id;
+        unnaturalBait.Image = avatarUrl;
+
+        _applicationContext.NaturalBaits.Update(unnaturalBait);
+
         await _unitOfWork.SaveChange();
     }
     

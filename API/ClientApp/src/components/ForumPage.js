@@ -11,6 +11,8 @@ import { filters } from '../addons/PostFilters';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import { AuthContext } from '../contexts/Auth';
 
+import './ForumPage.css';
+
 const ForumPage = (props) => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -75,7 +77,9 @@ const ForumPage = (props) => {
         </Button>
       </div>
       <ResponsiveMasonry columnsCountBreakPoints={{
-        600: 1,
+        400: 1,
+        750: 2,
+        1100: 3,
         1200: 2,
         1800: 3
       }}>
@@ -149,10 +153,8 @@ const ForumShortPost = ({ post }) => {
   }, [handlePostText]);
 
   return (
-    <Card style={{
+    <Card className='forum-short-post' style={{
       width: 300,
-      minWidth: 300,
-      maxWidth: 300,
       alignSelf: 'center'
     }}>
       {

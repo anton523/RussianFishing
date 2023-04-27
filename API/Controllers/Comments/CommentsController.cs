@@ -1,3 +1,4 @@
+using System.Data.Entity.Core;
 using System.Security.Claims;
 using API.Controllers.Comments.Dto;
 using Core;
@@ -5,6 +6,7 @@ using Core.Domains.Comments;
 using Core.Domains.Users.Services;
 using Data.Contexts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers.Comments;
 
@@ -40,5 +42,17 @@ public class CommentsController : ControllerBase
         await _unitOfWork.SaveChange();
 
         return comment;
+    }
+
+    [HttpDelete("{id}")]
+    public async Task DeleteComment(string id, CancellationToken cancellationToken)
+    {
+        var comment = await _applicationContext.Comments.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (comment is null)
+            throw new ObjectNotFoundException();
+
+        _applicationContext.Remove(comment);
+        await _unitOfWork.SaveChange();
     }
 }

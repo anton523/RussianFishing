@@ -104,7 +104,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{userId}")]
     public async Task Delete(string userId, CancellationToken cancellationToken)
     {
         await _userService.Delete(userId, cancellationToken);

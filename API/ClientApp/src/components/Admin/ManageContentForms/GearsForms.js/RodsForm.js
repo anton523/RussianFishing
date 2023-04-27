@@ -1,42 +1,34 @@
 import React, { useState } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { RodsCategories } from '../../../../addons/Gears/RodsCategories';
-import { createRod } from '../../../../utils/GearsApi';
+import { createRod, deleteRod, updateRod } from '../../../../utils/GearsApi';
 
 const items = RodsCategories.map(x => x.name);
 
-export function RodsForm() {
-  const [formData, setFormData] = useState({
-    Type: 0,
-    Name: '',
-    Sort: '',
-    Power: '',
-    Test1: 0,
-    Test2: 0,
-    Length: 0,
-    Feel: 0,
-    Hardness: 0,
-    Build: "",
-    Bonus1: "",
-    Bonus2: "",
-    Bonus3: "",
-    Durability: 0,
-    Level: 0,
-    SilverPrice: 0,
-    GoldPrice: 0,
-  });
-
+export function RodsForm({ formData, setFormData, formGroup, formGroups, setRods, setFormGroup, defaultFormData }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let success = await createRod(formData);
+    let success = formGroup === formGroups[1] ? await createRod(formData) : await updateRod(formData.Id, formData);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
 
+  const handleDelete = async (event) => {
+    deleteRod(formData.Id).then(isDeleted => {
+      if (isDeleted) {
+        alert('Удалена');
+        setRods(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[1]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -46,7 +38,7 @@ export function RodsForm() {
       return;
     }
 
-    if (name === 'Test1' || name === 'Test2' || name === 'Feel' || name === 'Hardness' || name === 'Level' || name === 'SilverPrice' || name === 'GoldPrice'){
+    if (name === 'Test1' || name === 'Test2' || name === 'Feel' || name === 'Hardness' || name === 'Level' || name === 'SilverPrice' || name === 'GoldPrice') {
       setFormData({ ...formData, [name]: parseInt(value) });
       return;
     }
@@ -269,9 +261,12 @@ export function RodsForm() {
           onChange={handleChange}
         />
       </FormGroup>
-      <Button type="submit">
-        Отправить
-      </Button>
+      <div style={{ display: 'flex' }}>
+        <Button type="submit">{formGroup === formGroups[1] ? 'Отправить' : 'Изменить'}</Button>
+        {
+          formGroup === formGroups[3] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+        }
+      </div>
     </Form>
   );
 }

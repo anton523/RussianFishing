@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardHeader, CardImg, CardBody, CardFooter, CardTitle, CardText, Input, Alert } from 'reactstrap';
 import { MdDateRange, MdVisibility, MdComment, MdOutlineFavorite, MdShare, MdFavorite } from "react-icons/md";
-import { addOrRemoveLikePost, addViewPost, getPostById } from '../utils/PostApi';
+import { addOrRemoveLikePost, addViewPost, deletePost, deletePostByid, getPostById } from '../utils/PostApi';
 import { createComment } from '../utils/CommentsApi';
 
 import './ForumPost.css';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/Auth';
+import { UserContext } from '../contexts/User';
 
 
 const ForumPost = () => {
@@ -16,6 +17,7 @@ const ForumPost = () => {
   const [displayAlertCopy, setDisplayAlertCopy] = useState(false);
   const [comments, setComments] = useState([]);
   const auth = useContext(AuthContext);
+  const userContext = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,6 +55,17 @@ const ForumPost = () => {
     setTimeout(() => {
       setDisplayAlertCopy(false);
     }, 2000)
+  };
+
+  const deletePost = () => {
+    deletePostByid(id).then(isDeleted => {
+      if (isDeleted){
+        alert('Удалено');
+        navigate('/forum');
+      } else {
+        alert('Не удалось');
+      }
+    })
   };
 
   const handleLike = (id) => {
@@ -189,6 +202,21 @@ const ForumPost = () => {
               <MdShare />
               <div>Поделиться</div>
             </Button>
+            {
+              userContext.user && userContext.user.role === 'Admin' 
+              ? <Button outline color='danger'
+              onClick={deletePost}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: 'none'
+              }}>
+              <MdShare />
+              <div>Удалить</div>
+            </Button>
+            : <></>
+            }
             <div style={{
               position: 'relative'
             }}>

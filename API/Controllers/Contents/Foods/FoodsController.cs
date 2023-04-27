@@ -56,4 +56,15 @@ public class FoodsController : ControllerBase
         _applicationContext.Alcohols.Remove(entity);
         await _unitOfWork.SaveChange();
     }
+
+    [HttpPut]
+    [Route("alcohol/{id}")]
+    public async Task UpdateAlcohol(string id, CreateAlcoholDto createAlcoholDto)
+    {
+        var alcohol = _mapper.Map<Alcohol>(createAlcoholDto);
+        alcohol.Id = id;
+
+        _applicationContext.Alcohols.Update(alcohol);
+        await _unitOfWork.SaveChange();
+    }
 }

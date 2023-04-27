@@ -18,3 +18,11 @@ export const createComment = async function (text, id) {
 
   throw new Error();
 }
+
+export const deleteComment = async function (id) {
+  let response = await fetch(`api/comments/${id}`, {
+    method: 'DELETE'
+  })
+
+  return response.status === 200;
+}

@@ -31,19 +31,18 @@ public class MapsController : ControllerBase
     [Route("all")]
     public async Task<IEnumerable<Map>> GetAllMaps(CancellationToken cancellationToken)
     {
-        await _applicationContext.Fishes.LoadAsync(cancellationToken);
-        return await _applicationContext.Maps.ToListAsync(cancellationToken);
+        return await _applicationContext.Maps.Include(x => x.Fishes).ToListAsync(cancellationToken);
     }
 
     [HttpGet("{mapId}")]
     public async Task<Map> GetMapById(string mapId, CancellationToken cancellationToken)
     {
-        var map = await _applicationContext.Maps.FirstOrDefaultAsync(x => x.Id == mapId, cancellationToken);
+        var map = await _applicationContext.Maps
+            .Include(x => x.Fishes)
+            .FirstOrDefaultAsync(x => x.Id == mapId, cancellationToken);
 
         if (map is null)
             throw new ObjectNotFoundException();
-
-        await _applicationContext.Fishes.LoadAsync(cancellationToken);
 
         return map;
     }
@@ -76,6 +75,38 @@ public class MapsController : ControllerBase
         }
 
         await _applicationContext.Maps.AddAsync(map, cancellationToken);
+        await _unitOfWork.SaveChange();
+    }
+    
+    [HttpPut("{mapId}")]
+    public async Task UpdateMap(string mapId, [FromForm] CreateMapDto createMapDto, CancellationToken cancellationToken)
+    {
+        var titleImageUrl = await ImageUploader.UploadImage(createMapDto.TitleImage, _webHostEnvironment.WebRootPath, cancellationToken);
+        var mapImageUrl = await ImageUploader.UploadImage(createMapDto.MapImage, _webHostEnvironment.WebRootPath, cancellationToken);
+
+        var map = new Map()
+        {
+            Id = mapId,
+            Name = createMapDto.Name,
+            Description = createMapDto.Description,
+            TitleImage = titleImageUrl,
+            MapImage = mapImageUrl
+        };
+
+        if (createMapDto.IdFishes is not null)
+        {
+            foreach (var id in createMapDto.IdFishes)
+            {
+                var fish = _applicationContext.Fishes.FirstOrDefault(x => x.Id == id);
+
+                if (fish is null)
+                    throw new ObjectNotFoundException();
+
+                map.Fishes.Add(fish);
+            }
+        }
+
+        _applicationContext.Maps.Update(map);
         await _unitOfWork.SaveChange();
     }
 

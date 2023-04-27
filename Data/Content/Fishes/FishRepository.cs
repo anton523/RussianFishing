@@ -35,9 +35,11 @@ public class FishRepository : IFishRepository
         await _applicationContext.Fishes.AddAsync(fish, cancellationToken);
     }
 
-    public async Task Update(Fish fish, CancellationToken cancellationToken)
+    public Task Update(Fish fish, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        _applicationContext.Fishes.Update(fish);
+        
+        return Task.CompletedTask;
     }
 
     public async Task Delete(string fishId, CancellationToken cancellationToken)

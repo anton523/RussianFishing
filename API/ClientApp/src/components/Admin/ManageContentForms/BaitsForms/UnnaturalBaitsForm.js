@@ -1,38 +1,36 @@
 import React, { useState } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import { createUnaturalBait } from '../../../../utils/BaitsApi';
+import { createUnaturalBait, deleteUnnaturalBait, updateUnnaturalBait } from '../../../../utils/BaitsApi';
 
-const items = ["ВРАЩАЮЩИЕСЯ", "КОЛЕБЛЯЩИЕСЯ", "ДЖЕРКБЕЙТЫ" ,"ТОПВОТЕРЫ", "МЯГКИЕ"];
+const items = ["ВРАЩАЮЩИЕСЯ", "КОЛЕБЛЯЩИЕСЯ", "ДЖЕРКБЕЙТЫ", "ТОПВОТЕРЫ", "МЯГКИЕ"];
 
-export function UnnaturalBaitsForm() {
+export function UnnaturalBaitsForm({ formData, setFormData, formGroup, formGroups, setUnnaturalBaits, setFormGroup, defaultFormData }) {
   const [selected, setSelected] = useState(items[0]);
-  const [formData, setFormData] = useState({
-    Type: 0,
-    Name: '',
-    Weigth: 0,
-    Manufacturer: '',
-    Size: '',
-    Floatation: '',
-    Tees: '',
-    Variants: 0,
-    Price: 0,
-    Brand: '',
-    Sort: '',
-    Shop: '',
-    Image: ''
-  });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData)
-    let success = await createUnaturalBait(formData);
+
+    let success = formGroup === formGroups[1] ? await createUnaturalBait(formData) : await updateUnnaturalBait(formData.Id, formData);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
+
+  const handleDelete = async (event) => {
+    deleteUnnaturalBait(formData.Id).then(isDeleted => {
+      if (isDeleted) {
+        alert('Удалена');
+        setUnnaturalBaits(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[0]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
 
   const handleImageUpload = (event) => {
     const selectedFile = event.target.files[0];
@@ -312,9 +310,12 @@ export function UnnaturalBaitsForm() {
           onChange={handleImageUpload}
         />
       </FormGroup>
-      <Button type="submit">
-        Отправить
-      </Button>
+      <div style={{ display: 'flex' }}>
+        <Button type="submit">{formGroup === formGroups[1] ? 'Отправить' : 'Изменить'}</Button>
+        {
+          formGroup === formGroups[3] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+        }
+      </div>
     </Form>
   );
 }

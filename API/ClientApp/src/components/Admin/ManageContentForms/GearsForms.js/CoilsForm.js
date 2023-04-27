@@ -1,47 +1,46 @@
 import React, { useState } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { CoilsCategories } from '../../../../addons/Gears/CoilsCategories';
-import { createCoil } from '../../../../utils/GearsApi';
+import { createCoil, deleteCoil, updateCoil } from '../../../../utils/GearsApi';
 
 const items = CoilsCategories.map(x => x.name);
 
-export function CoilsForm() {
-  const [formData, setFormData] = useState({
-    CoilType: 0,
-    Name: '',
-    Size: 0,
-    Test: 0,
-    Peredat: 0,
-    ThreeHundred: 0,
-    Speed: 0,
-    Freak: 0,
-    MechKilo: 0,
-    Level: 0,
-    SilverPrice: 0,
-    GoldPrice: 0,
-  });
-
+export function CoilsForm({ formData, setFormData, formGroup, formGroups, setCoils, setFormGroup, defaultFormData }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let success = await createCoil(formData);
+
+    let success = formGroup === formGroups[0] ? await createCoil(formData) : await updateCoil(formData.Id, formData);
 
     if (success) {
-      alert('Добавлена');
+      alert('Удалось');
     } else {
       alert('Неудачно');
     }
   };
 
+  const handleDelete = async (event) => {
+    deleteCoil(formData.Id).then(isDeleted => {
+      if (isDeleted) {
+        alert('Удалена');
+        setCoils(prev => prev.filter(x => x.id !== formData.Id));
+        setFormData(defaultFormData);
+        setFormGroup(formGroups[0]);
+      } else {
+        alert('Не удалось');
+      }
+    })
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
+    
     if (name === 'CoilType') {
       setFormData({ ...formData, [name]: items.indexOf(value) });
+      console.log(formData[formData.CoilType]);
       return;
     }
 
-    if (name === 'Size' || name === 'Level'){
+    if (name === 'Size' || name === 'Level') {
       setFormData({ ...formData, [name]: parseInt(value) });
       return;
     }
@@ -212,9 +211,12 @@ export function CoilsForm() {
           onChange={handleChange}
         />
       </FormGroup>
-      <Button type="submit">
-        Отправить
-      </Button>
+      <div style={{ display: 'flex' }}>
+        <Button type="submit">{formGroup === formGroups[0] ? 'Отправить' : 'Изменить'}</Button>
+        {
+          formGroup === formGroups[2] ? <Button onClick={handleDelete} style={{ marginLeft: 'auto' }} color='danger'>Удалить</Button> : <></>
+        }
+      </div>
     </Form>
   );
 }

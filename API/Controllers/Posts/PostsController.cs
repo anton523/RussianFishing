@@ -163,7 +163,7 @@ public class PostsController : ControllerBase
         await _unitOfWork.SaveChange();
     }
     
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task DeletePost(string id, CancellationToken cancellationToken)
     {
         var entity =
